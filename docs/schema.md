@@ -44,12 +44,12 @@ addressable_id   | integer   | not null
 addressable_type | string    | not null
 
 
-## countries
+<!-- ## countries
 
 column name   | data type | details
 --------------|-----------|-----------------------
 id            | integer   | not null, primary key
-name          | string    | not null
+name          | string    | not null -->
 
 
 ## networks
