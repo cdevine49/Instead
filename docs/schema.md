@@ -36,6 +36,17 @@ avatar_updated_at    | datetime  |
 user_id              | integer   | not null, indexed, unique
 
 
+## addressings
+
+column name      | data type | details
+-----------------|-----------|-----------------------
+id               | integer   | not null, primary key
+type             | string    | not null
+address_id      | integer   | not null
+addressable_id   | integer   | not null, indexed
+addressable_type | string    | not null, indexed
+
+
 ## addresses
 
 column name      | data type | details
@@ -46,9 +57,7 @@ type             | string    |
 town             | string    |
 state            | string    |
 zip_code         | integer   |
-country_id       | integer   |
-addressable_id   | integer   | not null
-addressable_type | string    | not null
+country          | string    |
 
 
 <!-- ## countries
