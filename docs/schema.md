@@ -7,26 +7,33 @@ password_digest | string    | not null
 session_token   | string    | not null, indexed, unique
 
 
-## firms
+## firm_profiles
 
 column name     | data type | details
 ----------------|-----------|-----------------------
 id              | integer   | not null, primary key
 name            | string    | not null
-industry        | string    | not null
+industry        | string    |
+about           | text      |
+industry        | string    |
+user_id         | integer   | not null, indexed
 
 
-## profiles
+## user_profiles
 
-column name         | data type | details
---------------------|-----------|-----------------------
-id                  | integer   | not null, primary key
-first_name          | string    | not null
-last_name           | string    | not null
-avatar_file_name    | string    | not null
-avatar_content_type | string    | not null
-avatar_file_size    | integer   | not null
-avatar_updated_at   | datetime  | not null
+column name          | data type | details
+-------------------- |-----------|-----------------------
+id                   | integer   | not null, primary key
+first_name           | string    |
+last_name            | string    |
+last_name            | string    |
+birthday             | date      |
+about                | text      |
+avatar_file_name     | string    |
+avatar_content_type  | string    |
+avatar_file_size     | integer   |
+avatar_updated_at    | datetime  |
+user_id              | integer   | not null, indexed, unique
 
 
 ## addresses
@@ -50,6 +57,17 @@ column name   | data type | details
 --------------|-----------|-----------------------
 id            | integer   | not null, primary key
 name          | string    | not null -->
+
+
+## posts
+
+column name      | data type | details
+-----------------|-----------|-----------------------
+id               | integer   | not null, primary key
+title            | string    |
+body             | text      |
+user_id          | integer   | not null, indexed
+profile_id       | integer   | not null, indexed
 
 
 ## networks
