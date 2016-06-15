@@ -24,6 +24,11 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def show
+    user = User.find_by(user_params)
+    user ? # render true : render false
+  end
+
   def destroy
 
   end

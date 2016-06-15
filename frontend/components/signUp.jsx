@@ -17,9 +17,52 @@ var SignUp = React.createClass({
     };
   },
 
-  _doesEmailExist: function(email) {
-    UserUtil.doesEmailExist();
+  componentDidMount: function() {
+    this.userStoreToken = UserStore.addListener();
   },
+
+  componentWillUnMount: function() {
+
+  },
+
+  _findUser: function(email) {
+    UserUtil.findUser({email: email});
+    this.setState({ emailEntered: true });
+  },
+
+  _update: function(option, e) {
+    switch (option) {
+    case "email":
+      this.setState({email: e.currentTarget.value});
+      break;
+    case "password":
+      this.setState({password: e.currentTarget.value});
+      break;
+    case "passwordConfirmation":
+      this.setState({passwordConfirmation: e.currentTarget.value});
+      break;
+    }
+  },
+
+  _entered: function(option, boolean) {
+    switch (option) {
+    case "email":
+      this.setState({emailEntered: boolean});
+      break;
+    case "password":
+      this.setState({passwordEntered: boolean});
+      break;
+    case "passwordConfirmation":
+      this.setState({passwordConfirmationEntered: boolean});
+      break;
+    }
+  },
+
+  _handleSubmit: function() {
+    UserUtil.signUp({email: this.state.email, password: this.state.password});
+  },
+
+  /* Find out if possible to get current blur or focus state of input field and use for class */
 
   render: function() {
     return (
@@ -31,11 +74,34 @@ var SignUp = React.createClass({
             type="text"
             id="email"
             placeholder="youremail@email.com"
-            className="Use the user store to set: UserStore.usernameExists()"
-            onChange={this._update.bind(null, "Email")}
-            onFocus={}
-            onBlur={this.doesEmailExist.bind(null, this.state.email)}
-            ></input>
+            className="Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)"
+            onChange={this._update.bind(null, "email")}
+            onFocus={this._entered.bind(null, "email", false)}
+            onBlur={this._findUser.bind(null, this.state.email)}
+          />
+
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            className=""
+            onChange={this._update.bind(null, "password")}
+            onFocus={this._entered.bind(null, "passwordEntered", false)}
+            onBlur={this._entered.bind(null, "passwordEntered", true)}
+          />
+
+          <label htmlFor="passwordConfirmation">Confirm Password</label>
+          <input
+            type="password"
+            id="passwordConfirmation"
+            className=""
+            onChange={this._update.bind(null, "passwordConfirmation")}
+            onFocus={this._entered.bind(null, "passwordConfirmationEntered", false)}
+            onBlur={this._entered.bind(null, "passwordConfirmationEntered", true)}
+          />
+
+        <button onSubmit={this._handleSubmit}>Create Account</button>
+
         </form>
       </div>
     );

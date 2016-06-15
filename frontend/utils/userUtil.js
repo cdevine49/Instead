@@ -1,8 +1,8 @@
 var UserActions = require('../actions/userActions');
 
 UserUtil = {
-  
-  signup: function (credentials, callback) {
+
+  signUp: function (credentials) { /* No callbacks check tumblr */
     $.ajax({
       type: "POST",
       url: "/api/users",
@@ -10,7 +10,7 @@ UserUtil = {
       data: {user: credentials},
       success: function (currentUser) {
         ApiActions.currentUserReceived(currentUser);
-        callback && callback();
+        // callback && callback();
       },
       error: function () {
         console.log('ApiUtil#signin error');
@@ -18,7 +18,7 @@ UserUtil = {
     });
   },
 
-  login: function (credentials, callback) {
+  signIn: function (credentials, callback) {
     $.ajax({
       type: "POST",
       url: "/api/session",
@@ -34,7 +34,7 @@ UserUtil = {
     });
   },
 
-  logout: function () {
+  signOut: function () {
     $.ajax({
       type: "DELETE",
       url: "/api/session",
@@ -64,6 +64,13 @@ UserUtil = {
       }
     });
   },
+
+  findUser: function () {
+    $.ajax({
+      type: "GET",
+      url: "/api/users",
+      dataType: "json",
+  }
 
 };
 
