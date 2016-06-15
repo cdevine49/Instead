@@ -24,6 +24,10 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def index
+    
+  end
+
   def show
     user = User.find_by(user_params)
     user ? # render true : render false

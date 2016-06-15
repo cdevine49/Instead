@@ -65,11 +65,20 @@ UserUtil = {
     });
   },
 
-  findUser: function () {
+  findUser: function (email) {
     $.ajax({
       type: "GET",
       url: "/api/users",
       dataType: "json",
+      data: email,
+      success: function (boolean) {
+        UserActions.foundUser(boolean);
+      },
+      error: function () {
+        console.log('UserUtil#findUser error');
+      }
+    });
+
   }
 
 };
