@@ -2,7 +2,7 @@ var UserActions = require('../actions/userActions');
 
 UserUtil = {
 
-  signUp: function (credentials) { /* No callbacks check tumblr */
+  signUp: function (credentials, callback) {
     $.ajax({
       type: "POST",
       url: "/api/users",
@@ -10,7 +10,7 @@ UserUtil = {
       data: {user: credentials},
       success: function (currentUser) {
         ApiActions.currentUserReceived(currentUser);
-        // callback && callback();
+        callback && callback();
       },
       error: function () {
         console.log('ApiUtil#signin error');

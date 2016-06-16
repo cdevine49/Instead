@@ -4,6 +4,10 @@ var UserStore = require('../stores/userStore');
 
 var SignUp = React.createClass({
 
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   getInitialState: function() {
     return {
       email: null,
@@ -59,7 +63,9 @@ var SignUp = React.createClass({
   },
 
   _handleSubmit: function() {
-    UserUtil.signUp({email: this.state.email, password: this.state.password});
+    UserUtil.signUp({email: this.state.email, password: this.state.password}, function () {
+      router.push("/");
+    });
   },
 
   /* Find out if possible to get current blur or focus state of input field and use for class */
