@@ -7,9 +7,9 @@ var App = require('./components/app');
 var SignIn = require('./components/signIn');
 var SignUp = require('./components/signUp');
 
-var SessionStore = require('./stores/sessionStore');
+var SessionStore = require('./stores/session');
 
-var ApiUtil = require('./utils/apiUtil');
+var UserUtil = require('./utils/userUtil');
 
 var Router = require('react-router').Router;
 var Route = require('react-router').Route;
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
       <Route path='/' component={App} >
-        <IndexRoute component={StandIn} />
+        <IndexRoute component={App} onEnter={_ensureLoggedIn} />
         <Route path='signin' component={SignIn}/>
         <Route path='signup' component={SignUp}/>
       </Route>
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function _ensureLoggedIn(nextState, replace, callback) {
   if (!SessionStore.currentUserFetched()) {
-    ApiUtil.fetchCurrentUser(_redirectUnlessLoggedIn);
+    UserUtil.fetchCurrentUser(_redirectUnlessLoggedIn);
   } else {
     _redirectUnlessLoggedIn();
   }

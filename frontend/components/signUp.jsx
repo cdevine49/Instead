@@ -1,6 +1,6 @@
 var React = require('react');
 var UserUtil = require('../utils/userUtil');
-var UserStore = require('../stores/userStore');
+var UserStore = require('../stores/session');
 
 var SignUp = React.createClass({
 
@@ -22,11 +22,11 @@ var SignUp = React.createClass({
   },
 
   componentDidMount: function() {
-    this.userStoreToken = UserStore.addListener();
+    this.sessionStoreToken = SessionStore.addListener();
   },
 
   componentWillUnMount: function() {
-
+    this.sessionStoreToken.remove();
   },
 
   _findUser: function(email) {

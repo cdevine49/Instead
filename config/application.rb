@@ -22,6 +22,17 @@ module Instead
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
 
+    config.generators do |g|
+      g.test_framework :rspec,
+        :fixtures => false,
+        :view_specs => false,
+        :helper_specs => false,
+        :routing_specs => false,
+        :controller_specs => true,
+        :request_specs => false
+      g.fixture_replacement :factory_girl, :dir => "spec/factories"
+    end
+
     config.paperclip_defaults = {
       :storage => :s3,
       :s3_credentials => {
