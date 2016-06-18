@@ -27,6 +27,8 @@ gem "paperclip", '5.0.0.beta1'
 gem 'figaro'
 gem 'aws-sdk', '>= 2.0'
 
+gem 'bcrypt', require: 'bcrypt'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -47,10 +49,12 @@ end
 group :test do
   gem 'faker'
   gem 'capybara'
-  gem 'guard-rspec'
+  gem 'guard-rspec', require: false
   gem 'launchy'
   gem 'shoulda-matchers'
 end
+
+gem 'newrelic_rpm'
 
 group :development do
   # Run 'annotate' in Terminal to add helpful comments to models.
