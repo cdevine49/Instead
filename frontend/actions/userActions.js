@@ -3,9 +3,9 @@ var UserConstants = require('../constants/UserConstants');
 
 UserActions = {
 
-  foundUser: function (boolean) {
+  emailUnique: function (boolean) {
     var action = {
-      actionType: UserConstants.USER_FOUND,
+      actionType: UserConstants.EMAIL_UNIQUE,
       boolean: boolean
     };
 

@@ -29,11 +29,6 @@ var SignUp = React.createClass({
     this.sessionStoreToken.remove();
   },
 
-  _findUser: function(email) {
-    UserUtil.findUser({email: email});
-    this.setState({ emailEntered: true });
-  },
-
   _update: function(option, e) {
     switch (option) {
     case "email":
@@ -52,6 +47,7 @@ var SignUp = React.createClass({
     switch (option) {
     case "email":
       this.setState({emailEntered: boolean});
+      if (boolean) { UserUtil.checkEmailUnique({email: email}); }
       break;
     case "password":
       this.setState({passwordEntered: boolean});
@@ -83,7 +79,7 @@ var SignUp = React.createClass({
             className="Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)"
             onChange={this._update.bind(null, "email")}
             onFocus={this._entered.bind(null, "email", false)}
-            onBlur={this._findUser.bind(null, this.state.email)}
+            onBlur={this._entered.bind(null, "email", true)}
           />
 
           <label htmlFor="password">Password</label>

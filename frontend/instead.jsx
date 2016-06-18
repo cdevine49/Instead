@@ -10,6 +10,7 @@ var SignUp = require('./components/signUp');
 var SessionStore = require('./stores/session');
 
 var UserUtil = require('./utils/userUtil');
+var SessionUtil = require('./utils/session');
 
 var Router = require('react-router').Router;
 var Route = require('react-router').Route;
@@ -32,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function _ensureLoggedIn(nextState, replace, callback) {
-  if (!SessionStore.currentUserFetched()) {
-    UserUtil.fetchCurrentUser(_redirectUnlessLoggedIn);
+  if (!SessionStore.currentUserFound()) {
+    SessionUtil.findCurrentUser(_redirectUnlessLoggedIn);
   } else {
     _redirectUnlessLoggedIn();
   }

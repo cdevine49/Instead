@@ -1,5 +1,5 @@
 UserConstants = {
-  USER_FOUND: 'USER_FOUND'
+  EMAIL_UNIQUE: 'EMAIL_UNIQUE'
 };
 
 module.exports = UserConstants;
