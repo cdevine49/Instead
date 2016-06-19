@@ -51,4 +51,4 @@ SessionUtil = {
 
 };
 
-module.exports = UserUtil;
+module.exports = SessionUtil;

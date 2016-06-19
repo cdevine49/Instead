@@ -5,7 +5,7 @@ var SessionStore = new Store(AppDispatcher);
 var SessionConstants = require('../constants/session');
 
 var _currentUser;
-var _currentUserFetched = false;
+var _currentUserFound = false;
 
 
 SessionStore.currentUser = function () {
@@ -24,12 +24,12 @@ SessionStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case SessionConstants.CURRENT_USER:
       _currentUser = payload.currentUser;
-      _currentUserFetched = true;
+      _currentUserFound = true;
       SessionStore.__emitChange();
       break;
     case SessionConstants.LOGOUT:
       _currentUser = null;
-      _currentUserFetched = false;
+      _currentUserFound = false;
       SessionStore.__emitChange();
       break;
   }

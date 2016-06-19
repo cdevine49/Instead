@@ -49,21 +49,19 @@
 	var ReactRouter = __webpack_require__(168);
 	
 	var App = __webpack_require__(229);
-	
 	var SignIn = __webpack_require__(230);
 	var SignUp = __webpack_require__(231);
-	var Jobs = __webpack_require__(261);
-	
-	var SessionStore = __webpack_require__(239);
+	var Jobs = __webpack_require__(270);
 	
 	var UserUtil = __webpack_require__(232);
 	var SessionUtil = __webpack_require__(258);
+	var SessionStore = __webpack_require__(239);
 	
 	var Router = __webpack_require__(168).Router;
 	var Route = __webpack_require__(168).Route;
-	var hashHistory = ReactRouter.hashHistory; /* May be deprecated */
+	var hashHistory = ReactRouter.hashHistory;
 	var IndexRoute = ReactRouter.IndexRoute;
-	
+	// onEnter={_ensureLoggedIn}
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(
 	    Router,
@@ -71,10 +69,10 @@
 	    React.createElement(
 	      Route,
 	      { path: '/', component: App },
-	      React.createElement(IndexRoute, { component: Jobs, onEnter: _ensureLoggedIn })
+	      React.createElement(IndexRoute, { component: Jobs })
 	    ),
-	    React.createElement(Route, { path: 'signup', component: SignUp }),
-	    React.createElement(Route, { path: 'signin', component: SignIn })
+	    React.createElement(Route, { path: '/signup', component: SignUp }),
+	    React.createElement(Route, { path: '/signin' })
 	  ), document.getElementById('root'));
 	});
 	
@@ -87,7 +85,7 @@
 	
 	  function _redirectUnlessLoggedIn() {
 	    if (!SessionStore.isLoggedIn()) {
-	      replace('/signin');
+	      replace('/signup');
 	    }
 	    callback();
 	  }
@@ -25916,9 +25914,9 @@
 	        null,
 	        'Instead'
 	      ),
-	      React.createElement(Header, null),
 	      this.props.children
 	    );
+	    // <Header />
 	  }
 	
 	});
@@ -26474,7 +26472,7 @@
 	var SessionConstants = __webpack_require__(259);
 	
 	var _currentUser;
-	var _currentUserFetched = false;
+	var _currentUserFound = false;
 	
 	SessionStore.currentUser = function () {
 	  return _currentUser;
@@ -26492,12 +26490,12 @@
 	  switch (payload.actionType) {
 	    case SessionConstants.CURRENT_USER:
 	      _currentUser = payload.currentUser;
-	      _currentUserFetched = true;
+	      _currentUserFound = true;
 	      SessionStore.__emitChange();
 	      break;
 	    case SessionConstants.LOGOUT:
 	      _currentUser = null;
-	      _currentUserFetched = false;
+	      _currentUserFound = false;
 	      SessionStore.__emitChange();
 	      break;
 	  }
@@ -33024,7 +33022,7 @@
 	
 	};
 	
-	module.exports = UserUtil;
+	module.exports = SessionUtil;
 
 /***/ },
 /* 259 */
@@ -33038,83 +33036,10 @@
 
 /***/ },
 /* 260 */,
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var Filter = __webpack_require__(262);
-	var Sidebar = __webpack_require__(263);
-	var Posting = __webpack_require__(264);
-	
-	var JobUtil = __webpack_require__(265);
-	var JobStore = __webpack_require__(267);
-	
-	var Jobs = React.createClass({
-	  displayName: 'Jobs',
-	
-	
-	  getInitialState: function () {
-	    return {
-	      jobs: null,
-	      page: 1,
-	      per: 10
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    this.jobStoreToken = JobStore.addListener(this._onChange);
-	  },
-	
-	  _onChange: function () {
-	    var jobs = JobStore.all();
-	    var page = JobStore.meta().page;
-	    var per = JobStore.meta().per;
-	
-	    this.setState({ jobs: jobs, page: page, per: per });
-	  },
-	
-	  render: function () {
-	    var Previews = "Enter a new search";
-	
-	    if (this.state.jobs) {
-	      Previews = this.state.jobs.map(function (job, index) {
-	        React.createElement(Posting, { key: index, job: job });
-	      });
-	    }
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(Filter, null),
-	      React.createElement(Sidebar, null),
-	      Previews
-	    );
-	  }
-	
-	});
-	
-	module.exports = Jobs;
-
-/***/ },
-/* 262 */
-/***/ function(module, exports) {
-
-
-
-/***/ },
-/* 263 */
-/***/ function(module, exports) {
-
-
-
-/***/ },
-/* 264 */
-/***/ function(module, exports) {
-
-
-
-/***/ },
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
 /* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -33167,6 +33092,77 @@
 	};
 	
 	module.exports = JobConstants;
+
+/***/ },
+/* 269 */,
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	// var Filter = require('./jobs/filter');
+	// var Sidebar = require('./jobs/sidebar');
+	// var Posting = require('./jobs/posting');
+	
+	var JobUtil = __webpack_require__(265);
+	var JobStore = __webpack_require__(267);
+	
+	var Jobs = React.createClass({
+	  displayName: 'Jobs',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      jobs: null,
+	      page: 1,
+	      per: 10
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.jobStoreToken = JobStore.addListener(this._onChange);
+	  },
+	
+	  _onChange: function () {
+	    var jobs = JobStore.all();
+	    var page = JobStore.meta().page;
+	    var per = JobStore.meta().per;
+	
+	    this.setState({ jobs: jobs, page: page, per: per });
+	  },
+	
+	  render: function () {
+	    var Index;
+	
+	    if (this.state.jobs) {
+	      Index = this.state.jobs.map(function (job, index) {
+	        // <Posting key={ index } job={ job } />;
+	        React.createElement(
+	          'p',
+	          null,
+	          'test'
+	        );
+	      });
+	    } else {
+	      Index = React.createElement(
+	        'p',
+	        null,
+	        'Enter a new search'
+	      );
+	    }
+	    // <Filter />
+	    // <Sidebar />
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      Index
+	    );
+	  }
+	
+	});
+	
+	module.exports = Jobs;
 
 /***/ }
 /******/ ]);
