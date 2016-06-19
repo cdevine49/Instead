@@ -1,4 +1,4 @@
-var UserActions = require('../actions/userActions');
+var UserActions = require('../actions/user');
 var SessionActions = require('../actions/session');
 
 UserUtil = {
@@ -20,14 +20,15 @@ UserUtil = {
   },
 
 
-  checkEmailUnique: function (email) {
+  checkEmailUnique: function (email, callback) {
     $.ajax({
       type: "GET",
-      url: "/api/users",
+      url: "/api/users/unique",
       dataType: "json",
-      data: email,
+      data: {user: email},
       success: function (boolean) {
         UserActions.emailUnique(boolean);
+        callback && callback();
       },
       error: function () {
         console.log('UserUtil#findUser error');

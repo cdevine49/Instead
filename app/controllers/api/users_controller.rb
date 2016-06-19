@@ -25,16 +25,19 @@ class Api::UsersController < ApplicationController
   end
 
   def index
-    
+    @users = User.all
   end
 
   def show
-    user = User.find_by(user_params)
-    user ? # render true : render false
+    @user = User.find_by(user_params)
   end
 
   def destroy
 
+  end
+
+  def unique
+    render json: !User.find_by(user_params)
   end
 
   private

@@ -4,16 +4,16 @@ var UserStore = new Store(AppDispatcher);
 
 var UserConstants = require('../constants/userConstants');
 
-var _taken;
+var _unique = true;
 
 UserStore.emailAvailable = function () {
-  return _taken;
+  return _unique;
 };
 
 UserStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case UserConstants.EMAIL_UNIQUE:
-      _taken = payload.boolean;
+      _unique = payload.boolean;
       UserStore.__emitChange();
       break;
   }

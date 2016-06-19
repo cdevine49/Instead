@@ -1,6 +1,14 @@
 var React = require('react');
+
 var UserUtil = require('../utils/userUtil');
-var SessionStore = require('../stores/session');
+var UserStore = require('../stores/user');
+
+var LogInError = require('./login/error');
+
+String.prototype.empty = function () {
+  console.log(this.toString());
+  return this.toString() === "";
+};
 
 var SignUp = React.createClass({
 
@@ -10,56 +18,55 @@ var SignUp = React.createClass({
 
   getInitialState: function() {
     return {
-      email: null,
+      email: '',
       emailEntered: false,
 
-      password: null,
+      password: '',
       passwordEntered: false,
 
-      passwordConfirmation: null,
-      passwordConfirmationEntered: false
+      confirmation: '',
+      confirmationEntered: false,
+
+      _type: "session"
     };
   },
 
-  // componentDidMount: function() {
-  //   this.sessionStoreToken = SessionStore.addListener();
-  // },
-  //
-  // componentWillUnMount: function() {
-  //   this.sessionStoreToken.remove();
-  // },
-
   _update: function(option, e) {
+    var input = e.currentTarget.value;
     switch (option) {
     case "email":
-      this.setState({email: e.currentTarget.value});
+      this.setState({email: input});
       break;
     case "password":
-      this.setState({password: e.currentTarget.value});
+      this.setState({password: input, confirmation: "", confirmationEntered: false});
       break;
-    case "passwordConfirmation":
-      this.setState({passwordConfirmation: e.currentTarget.value});
+    case "confirmation":
+      this.setState({confirmation: input});
       break;
+    case "_type":
+      this.setState({ _type: this.state._type === "session" ? "user" : "session"});
     }
   },
 
   _entered: function(option, boolean) {
     switch (option) {
     case "email":
-      this.setState({emailEntered: boolean});
-      if (boolean) { UserUtil.checkEmailUnique({email: email}); }
+    var callback = this.setState({emailEntered: boolean});
+      if (boolean) {
+        UserUtil.checkEmailUnique({email: this.state.email}, callback);
+      }
       break;
     case "password":
       this.setState({passwordEntered: boolean});
       break;
-    case "passwordConfirmation":
-      this.setState({passwordConfirmationEntered: boolean});
+    case "confirmation":
+      this.setState({confirmationEntered: boolean});
       break;
     }
   },
 
   _handleSubmit: function() {
-    UserUtil.signUp({email: this.state.email, password: this.state.password}, function () {
+    UserUtil.signUp(this.state._type, {email: this.state.email, password: this.state.password}, function () {
       router.push("/");
     });
   },
@@ -67,20 +74,42 @@ var SignUp = React.createClass({
   /* Find out if possible to get current blur or focus state of input field and use for class */
 
   render: function() {
+
+    var email = this.state.email;
+    var password = this.state.password;
+    var confirmation = this.state.confirmation;
+
+    var emailError = this.state.emailEntered;
+    var passwordError = this.state.passwordEntered;
+    var confirmError = this.state.confirmationEntered;
+
+    var emailEmpty = emailError && email.empty();
+    var emailTaken = emailError && !UserStore.emailAvailable();
+    var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+
+    var passwordEmpty = passwordError && password.empty();
+    var passwordShort = passwordError && !password.empty() && password.length < 8;
+    var passwordLong = passwordError && password.length > 100;
+
+    var confirmationEmpty = confirmError && password.empty() && confirmation.empty();
+
     return (
-      <div className="sign-up-form">
+      <main className="sign-up-form">
         <h1>Create Your Instead Account</h1>
-        <form>
+        <form noValidate>
           <label htmlFor="email">Email</label>
           <input
-            type="text"
+            type="email"
             id="email"
             placeholder="youremail@email.com"
-            className="Use the user store to set: this.state.emailEntered && SessionStore.emailExists(this.state.email)"
+            className="Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)"
             onChange={this._update.bind(null, "email")}
             onFocus={this._entered.bind(null, "email", false)}
             onBlur={this._entered.bind(null, "email", true)}
           />
+        <LogInError toggle={emailEmpty} message={"You can\'t leave this empty"} />
+        <LogInError toggle={emailTaken} message={"Someone already has that username. Try another?"} />
+        <LogInError toggle={emailInvalid} message={"You\'re email doesn\'t look quite right"} />
 
           <label htmlFor="password">Password</label>
           <input
@@ -88,24 +117,31 @@ var SignUp = React.createClass({
             id="password"
             className=""
             onChange={this._update.bind(null, "password")}
-            onFocus={this._entered.bind(null, "passwordEntered", false)}
-            onBlur={this._entered.bind(null, "passwordEntered", true)}
+            onFocus={this._entered.bind(null, "password", false)}
+            onBlur={this._entered.bind(null, "password", true)}
           />
 
-          <label htmlFor="passwordConfirmation">Confirm Password</label>
+        <LogInError toggle={passwordEmpty} message={"You can\'t leave this empty"} />
+        <LogInError toggle={passwordShort} message={"Short passwords are easy to guess. Try one with at least 8 characters."} />
+        <LogInError toggle={passwordLong} message={"Must have at most 100 characters"} />
+
+          <label htmlFor="confirmation">Confirm Password</label>
           <input
             type="password"
-            id="passwordConfirmation"
+            id="confirmation"
             className=""
-            onChange={this._update.bind(null, "passwordConfirmation")}
-            onFocus={this._entered.bind(null, "passwordConfirmationEntered", false)}
-            onBlur={this._entered.bind(null, "passwordConfirmationEntered", true)}
+            onChange={this._update.bind(null, "confirmation")}
+            onFocus={this._entered.bind(null, "confirmation", false)}
+            onBlur={this._entered.bind(null, "confirmation", true)}
           />
+
+        <LogInError toggle={confirmationEmpty} message={"You can\'t leave this empty"} />
 
         <button onSubmit={this._handleSubmit}>Create Account</button>
 
         </form>
-      </div>
+        <div onClick={this._update.bind(null, "_type")}>{ this.state._type === "session" ? "Create Account" : "Log In" }</div>
+      </main>
     );
   }
 

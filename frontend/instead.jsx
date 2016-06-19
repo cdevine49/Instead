@@ -3,7 +3,6 @@ var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
 
 var App = require('./components/app');
-var SignIn = require('./components/signIn');
 var SignUp = require('./components/signUp');
 var Jobs = require('./components/jobs');
 
