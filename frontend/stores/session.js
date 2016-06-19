@@ -2,7 +2,7 @@ var Store = require('flux/utils').Store;
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var SessionStore = new Store(AppDispatcher);
 
-var SessionConstants = require('../constants/sessionConstants');
+var SessionConstants = require('../constants/session');
 
 var _currentUser;
 var _currentUserFetched = false;

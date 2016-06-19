@@ -52,6 +52,7 @@
 	
 	var SignIn = __webpack_require__(230);
 	var SignUp = __webpack_require__(231);
+	var Jobs = __webpack_require__(261);
 	
 	var SessionStore = __webpack_require__(239);
 	
@@ -62,7 +63,7 @@
 	var Route = __webpack_require__(168).Route;
 	var hashHistory = ReactRouter.hashHistory; /* May be deprecated */
 	var IndexRoute = ReactRouter.IndexRoute;
-	// onEnter={_ensureLoggedIn}
+	
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(
 	    Router,
@@ -70,10 +71,10 @@
 	    React.createElement(
 	      Route,
 	      { path: '/', component: App },
-	      React.createElement(IndexRoute, { component: App, onEnter: _ensureLoggedIn }),
-	      React.createElement(Route, { path: 'signin', component: SignIn }),
-	      React.createElement(Route, { path: 'signup', component: SignUp })
-	    )
+	      React.createElement(IndexRoute, { component: Jobs, onEnter: _ensureLoggedIn })
+	    ),
+	    React.createElement(Route, { path: 'signup', component: SignUp }),
+	    React.createElement(Route, { path: 'signin', component: SignIn })
 	  ), document.getElementById('root'));
 	});
 	
@@ -25915,6 +25916,7 @@
 	        null,
 	        'Instead'
 	      ),
+	      React.createElement(Header, null),
 	      this.props.children
 	    );
 	  }
@@ -25935,7 +25937,7 @@
 
 	var React = __webpack_require__(1);
 	var UserUtil = __webpack_require__(232);
-	var UserStore = __webpack_require__(239);
+	var SessionStore = __webpack_require__(239);
 	
 	var SignUp = React.createClass({
 	  displayName: 'SignUp',
@@ -25958,13 +25960,13 @@
 	    };
 	  },
 	
-	  componentDidMount: function () {
-	    this.sessionStoreToken = SessionStore.addListener();
-	  },
-	
-	  componentWillUnMount: function () {
-	    this.sessionStoreToken.remove();
-	  },
+	  // componentDidMount: function() {
+	  //   this.sessionStoreToken = SessionStore.addListener();
+	  // },
+	  //
+	  // componentWillUnMount: function() {
+	  //   this.sessionStoreToken.remove();
+	  // },
 	
 	  _update: function (option, e) {
 	    switch (option) {
@@ -26026,7 +26028,7 @@
 	          type: 'text',
 	          id: 'email',
 	          placeholder: 'youremail@email.com',
-	          className: 'Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)',
+	          className: 'Use the user store to set: this.state.emailEntered && SessionStore.emailExists(this.state.email)',
 	          onChange: this._update.bind(null, "email"),
 	          onFocus: this._entered.bind(null, "email", false),
 	          onBlur: this._entered.bind(null, "email", true)
@@ -26469,7 +26471,7 @@
 	var AppDispatcher = __webpack_require__(234);
 	var SessionStore = new Store(AppDispatcher);
 	
-	var SessionConstants = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../constants/sessionConstants\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var SessionConstants = __webpack_require__(259);
 	
 	var _currentUser;
 	var _currentUserFetched = false;
@@ -33023,6 +33025,148 @@
 	};
 	
 	module.exports = UserUtil;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports) {
+
+	SessionConstants = {
+	  CURRENT_USER: 'CURRENT_USER'
+	};
+	
+	module.exports = SessionConstants;
+
+/***/ },
+/* 260 */,
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Filter = __webpack_require__(262);
+	var Sidebar = __webpack_require__(263);
+	var Posting = __webpack_require__(264);
+	
+	var JobUtil = __webpack_require__(265);
+	var JobStore = __webpack_require__(267);
+	
+	var Jobs = React.createClass({
+	  displayName: 'Jobs',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      jobs: null,
+	      page: 1,
+	      per: 10
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.jobStoreToken = JobStore.addListener(this._onChange);
+	  },
+	
+	  _onChange: function () {
+	    var jobs = JobStore.all();
+	    var page = JobStore.meta().page;
+	    var per = JobStore.meta().per;
+	
+	    this.setState({ jobs: jobs, page: page, per: per });
+	  },
+	
+	  render: function () {
+	    var Previews = "Enter a new search";
+	
+	    if (this.state.jobs) {
+	      Previews = this.state.jobs.map(function (job, index) {
+	        React.createElement(Posting, { key: index, job: job });
+	      });
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Filter, null),
+	      React.createElement(Sidebar, null),
+	      Previews
+	    );
+	  }
+	
+	});
+	
+	module.exports = Jobs;
+
+/***/ },
+/* 262 */
+/***/ function(module, exports) {
+
+
+
+/***/ },
+/* 263 */
+/***/ function(module, exports) {
+
+
+
+/***/ },
+/* 264 */
+/***/ function(module, exports) {
+
+
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var JobActions = __webpack_require__(266);
+	
+	JobUtil = {};
+	
+	module.exports = JobUtil;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports) {
+
+
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(240).Store;
+	var AppDispatcher = __webpack_require__(234);
+	var JobStore = new Store(AppDispatcher);
+	
+	var JobConstants = __webpack_require__(268);
+	
+	JobStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case JobConstants.CURRENT_USER:
+	      _currentUser = payload.currentUser;
+	      _currentUserFetched = true;
+	      JobStore.__emitChange();
+	      break;
+	    case JobConstants.LOGOUT:
+	      _currentUser = null;
+	      _currentUserFetched = false;
+	      JobStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = JobStore;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports) {
+
+	JobConstants = {
+	  CURRENT_USER: 'CURRENT_USER'
+	  // Change above
+	};
+	
+	module.exports = JobConstants;
 
 /***/ }
 /******/ ]);

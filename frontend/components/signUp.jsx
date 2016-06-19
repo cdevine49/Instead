@@ -1,6 +1,6 @@
 var React = require('react');
 var UserUtil = require('../utils/userUtil');
-var UserStore = require('../stores/session');
+var SessionStore = require('../stores/session');
 
 var SignUp = React.createClass({
 
@@ -21,13 +21,13 @@ var SignUp = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.sessionStoreToken = SessionStore.addListener();
-  },
-
-  componentWillUnMount: function() {
-    this.sessionStoreToken.remove();
-  },
+  // componentDidMount: function() {
+  //   this.sessionStoreToken = SessionStore.addListener();
+  // },
+  //
+  // componentWillUnMount: function() {
+  //   this.sessionStoreToken.remove();
+  // },
 
   _update: function(option, e) {
     switch (option) {
@@ -76,7 +76,7 @@ var SignUp = React.createClass({
             type="text"
             id="email"
             placeholder="youremail@email.com"
-            className="Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)"
+            className="Use the user store to set: this.state.emailEntered && SessionStore.emailExists(this.state.email)"
             onChange={this._update.bind(null, "email")}
             onFocus={this._entered.bind(null, "email", false)}
             onBlur={this._entered.bind(null, "email", true)}

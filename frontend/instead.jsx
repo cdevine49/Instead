@@ -6,6 +6,7 @@ var App = require('./components/app');
 
 var SignIn = require('./components/signIn');
 var SignUp = require('./components/signUp');
+var Jobs = require('./components/jobs/index');
 
 var SessionStore = require('./stores/session');
 
@@ -16,16 +17,16 @@ var Router = require('react-router').Router;
 var Route = require('react-router').Route;
 var hashHistory = ReactRouter.hashHistory; /* May be deprecated */
 var IndexRoute = ReactRouter.IndexRoute;
-// onEnter={_ensureLoggedIn}
+
 document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
       <Route path='/' component={App} >
-        <IndexRoute component={App} onEnter={_ensureLoggedIn} />
-        <Route path='signin' component={SignIn}/>
-        <Route path='signup' component={SignUp}/>
+        <IndexRoute component={Jobs} onEnter={_ensureLoggedIn} />
       </Route>
 
+      <Route path='signup' component={SignUp}/>
+      <Route path='signin' component={SignIn}/>
 
     </Router>,
     document.getElementById('root')

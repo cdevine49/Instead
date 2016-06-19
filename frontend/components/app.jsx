@@ -6,6 +6,7 @@ var App = React.createClass({
     return (
       <main>
         <h1>Instead</h1>
+        <Header />
         {this.props.children}
       </main>
     );
