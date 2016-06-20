@@ -49,8 +49,9 @@
 	var ReactRouter = __webpack_require__(168);
 	
 	var App = __webpack_require__(229);
-	var SignUp = __webpack_require__(231);
+	var LogIn = __webpack_require__(275);
 	var Jobs = __webpack_require__(270);
+	var Profile = __webpack_require__(260);
 	
 	var UserUtil = __webpack_require__(232);
 	var SessionUtil = __webpack_require__(258);
@@ -68,10 +69,9 @@
 	    React.createElement(
 	      Route,
 	      { path: '/', component: App },
-	      React.createElement(IndexRoute, { component: Jobs })
+	      React.createElement(IndexRoute, { component: Profile })
 	    ),
-	    React.createElement(Route, { path: '/signup', component: SignUp }),
-	    React.createElement(Route, { path: '/signin' })
+	    React.createElement(Route, { path: '/login', component: LogIn })
 	  ), document.getElementById('root'));
 	});
 	
@@ -25924,183 +25924,7 @@
 
 /***/ },
 /* 230 */,
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var UserUtil = __webpack_require__(232);
-	var UserStore = __webpack_require__(271);
-	
-	var LogInError = __webpack_require__(274);
-	
-	String.prototype.empty = function () {
-	  console.log(this.toString());
-	  return this.toString() === "";
-	};
-	
-	var SignUp = React.createClass({
-	  displayName: 'SignUp',
-	
-	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  getInitialState: function () {
-	    return {
-	      email: '',
-	      emailEntered: false,
-	
-	      password: '',
-	      passwordEntered: false,
-	
-	      confirmation: '',
-	      confirmationEntered: false,
-	
-	      _type: "session"
-	    };
-	  },
-	
-	  _update: function (option, e) {
-	    var input = e.currentTarget.value;
-	    switch (option) {
-	      case "email":
-	        this.setState({ email: input });
-	        break;
-	      case "password":
-	        this.setState({ password: input, confirmation: "", confirmationEntered: false });
-	        break;
-	      case "confirmation":
-	        this.setState({ confirmation: input });
-	        break;
-	      case "_type":
-	        this.setState({ _type: this.state._type === "session" ? "user" : "session" });
-	    }
-	  },
-	
-	  _entered: function (option, boolean) {
-	    switch (option) {
-	      case "email":
-	        var callback = this.setState({ emailEntered: boolean });
-	        if (boolean) {
-	          UserUtil.checkEmailUnique({ email: this.state.email }, callback);
-	        }
-	        break;
-	      case "password":
-	        this.setState({ passwordEntered: boolean });
-	        break;
-	      case "confirmation":
-	        this.setState({ confirmationEntered: boolean });
-	        break;
-	    }
-	  },
-	
-	  _handleSubmit: function () {
-	    UserUtil.signUp(this.state._type, { email: this.state.email, password: this.state.password }, function () {
-	      router.push("/");
-	    });
-	  },
-	
-	  /* Find out if possible to get current blur or focus state of input field and use for class */
-	
-	  render: function () {
-	
-	    var email = this.state.email;
-	    var password = this.state.password;
-	    var confirmation = this.state.confirmation;
-	
-	    var emailError = this.state.emailEntered;
-	    var passwordError = this.state.passwordEntered;
-	    var confirmError = this.state.confirmationEntered;
-	
-	    var emailEmpty = emailError && email.empty();
-	    var emailTaken = emailError && !UserStore.emailAvailable();
-	    var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
-	
-	    var passwordEmpty = passwordError && password.empty();
-	    var passwordShort = passwordError && !password.empty() && password.length < 8;
-	    var passwordLong = passwordError && password.length > 100;
-	
-	    var confirmationEmpty = confirmError && password.empty() && confirmation.empty();
-	
-	    return React.createElement(
-	      'main',
-	      { className: 'sign-up-form' },
-	      React.createElement(
-	        'h1',
-	        null,
-	        'Create Your Instead Account'
-	      ),
-	      React.createElement(
-	        'form',
-	        { noValidate: true },
-	        React.createElement(
-	          'label',
-	          { htmlFor: 'email' },
-	          'Email'
-	        ),
-	        React.createElement('input', {
-	          type: 'email',
-	          id: 'email',
-	          placeholder: 'youremail@email.com',
-	          className: 'Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)',
-	          onChange: this._update.bind(null, "email"),
-	          onFocus: this._entered.bind(null, "email", false),
-	          onBlur: this._entered.bind(null, "email", true)
-	        }),
-	        React.createElement(LogInError, { toggle: emailEmpty, message: "You can\'t leave this empty" }),
-	        React.createElement(LogInError, { toggle: emailTaken, message: "Someone already has that username. Try another?" }),
-	        React.createElement(LogInError, { toggle: emailInvalid, message: "You\'re email doesn\'t look quite right" }),
-	        React.createElement(
-	          'label',
-	          { htmlFor: 'password' },
-	          'Password'
-	        ),
-	        React.createElement('input', {
-	          type: 'password',
-	          id: 'password',
-	          className: '',
-	          onChange: this._update.bind(null, "password"),
-	          onFocus: this._entered.bind(null, "password", false),
-	          onBlur: this._entered.bind(null, "password", true)
-	        }),
-	        React.createElement(LogInError, { toggle: passwordEmpty, message: "You can\'t leave this empty" }),
-	        React.createElement(LogInError, { toggle: passwordShort, message: "Short passwords are easy to guess. Try one with at least 8 characters." }),
-	        React.createElement(LogInError, { toggle: passwordLong, message: "Must have at most 100 characters" }),
-	        React.createElement(
-	          'label',
-	          { htmlFor: 'confirmation' },
-	          'Confirm Password'
-	        ),
-	        React.createElement('input', {
-	          type: 'password',
-	          id: 'confirmation',
-	          className: '',
-	          onChange: this._update.bind(null, "confirmation"),
-	          onFocus: this._entered.bind(null, "confirmation", false),
-	          onBlur: this._entered.bind(null, "confirmation", true)
-	        }),
-	        React.createElement(LogInError, { toggle: confirmationEmpty, message: "You can\'t leave this empty" }),
-	        React.createElement(
-	          'button',
-	          { onSubmit: this._handleSubmit },
-	          'Create Account'
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { onClick: this._update.bind(null, "_type") },
-	        this.state._type === "session" ? "Create Account" : "Log In"
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = SignUp;
-
-/***/ },
+/* 231 */,
 /* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -26109,10 +25933,10 @@
 	
 	UserUtil = {
 	
-	  signUp: function (credentials, callback) {
+	  signIn: function (url, credentials, callback) {
 	    $.ajax({
 	      type: "POST",
-	      url: "/api/users",
+	      url: "/api/" + url,
 	      dataType: "json",
 	      data: { user: credentials },
 	      success: function (currentUser) {
@@ -26120,7 +25944,7 @@
 	        callback && callback();
 	      },
 	      error: function () {
-	        console.log('UserUtil#signUp error');
+	        console.log('UserUtil#signIn error');
 	      }
 	    });
 	  },
@@ -32958,8 +32782,11 @@
 
 /***/ },
 /* 257 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var AppDispatcher = __webpack_require__(234);
+	var SessionConstants = __webpack_require__(259);
+	
 	SessionActions = {
 	
 	  currentUser: function (currentUser) {
@@ -32982,22 +32809,6 @@
 	var SessionActions = __webpack_require__(257);
 	
 	SessionUtil = {
-	
-	  signIn: function (credentials, callback) {
-	    $.ajax({
-	      type: "POST",
-	      url: "/api/session",
-	      dataType: "json",
-	      data: credentials,
-	      success: function (currentUser) {
-	        SessionActions.currentUser(currentUser);
-	        callback && callback();
-	      },
-	      error: function () {
-	        console.log('SessionUtil#signIn error');
-	      }
-	    });
-	  },
 	
 	  signOut: function () {
 	    $.ajax({
@@ -33045,7 +32856,41 @@
 	module.exports = SessionConstants;
 
 /***/ },
-/* 260 */,
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	// var ProfileUtil = require('../utils/profile');
+	// var ProfileStore = require('../stores/profile');
+	
+	var Profile = React.createClass({
+	  displayName: "Profile",
+	
+	
+	  getInitialState: function () {
+	    return {
+	      blank: "blank"
+	    };
+	  },
+	
+	  // <ProfileSidebar />
+	  // <Skills />
+	  // <WorkExperience />
+	  // <Education />
+	  // <About />
+	  render: function () {
+	    return React.createElement(
+	      "main",
+	      null,
+	      "Logged In"
+	    );
+	  }
+	
+	});
+	
+	module.exports = Profile;
+
+/***/ },
 /* 261 */,
 /* 262 */,
 /* 263 */,
@@ -33268,6 +33113,191 @@
 	  }
 	  return true;
 	};
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var UserUtil = __webpack_require__(232);
+	var UserStore = __webpack_require__(271);
+	
+	var LogInError = __webpack_require__(274);
+	
+	String.prototype.empty = function () {
+	  return this.toString() === "";
+	};
+	
+	var LogIn = React.createClass({
+	  displayName: 'LogIn',
+	
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function () {
+	    return {
+	      email: '',
+	      emailEntered: false,
+	
+	      password: '',
+	      passwordEntered: false,
+	
+	      confirmation: '',
+	      confirmationEntered: false,
+	
+	      url: "session"
+	    };
+	  },
+	
+	  _update: function (option, e) {
+	    var input = e.currentTarget.value;
+	    switch (option) {
+	      case "email":
+	        this.setState({ email: input });
+	        break;
+	      case "password":
+	        this.setState({ password: input, confirmation: "", confirmationEntered: false });
+	        break;
+	      case "confirmation":
+	        this.setState({ confirmation: input });
+	        break;
+	      case "url":
+	        this.setState({ url: this.state.url === "session" ? "users" : "session" });
+	    }
+	  },
+	
+	  _entered: function (option, boolean) {
+	    switch (option) {
+	      case "email":
+	        var callback = this.setState({ emailEntered: boolean });
+	        if (boolean) {
+	          UserUtil.checkEmailUnique({ email: this.state.email }, callback);
+	        }
+	        break;
+	      case "password":
+	        this.setState({ passwordEntered: boolean });
+	        break;
+	      case "confirmation":
+	        this.setState({ confirmationEntered: boolean });
+	        break;
+	    }
+	  },
+	
+	  _handleSubmit: function () {
+	    var router = this.context.router;
+	    UserUtil.signIn(this.state.url, { email: this.state.email, password: this.state.password }, function () {
+	      router.push("/");
+	    });
+	  },
+	
+	  /* Find out if possible to get current blur or focus state of input field and use for class */
+	
+	  render: function () {
+	
+	    var email = this.state.email;
+	    var password = this.state.password;
+	    var confirmation = this.state.confirmation;
+	    var url = this.state.url;
+	    var loggingIn = url === "session";
+	
+	    var emailError = this.state.emailEntered;
+	    var passwordError = !loggingIn && this.state.passwordEntered;
+	    var confirmError = !loggingIn && this.state.confirmationEntered;
+	
+	    var emailEmpty = emailError && email.empty();
+	    var emailTaken = !loggingIn && emailError && !UserStore.emailAvailable();
+	    var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+	
+	    var passwordEmpty = passwordError && password.empty();
+	    var passwordShort = !loggingIn && passwordError && !password.empty() && password.length < 8;
+	    var passwordLong = !loggingIn && passwordError && password.length > 100;
+	
+	    var confirmationEmpty = confirmError && password.empty() && confirmation.empty();
+	    var noMatch = confirmError && password !== confirmation;
+	
+	    return React.createElement(
+	      'main',
+	      { className: 'sign-up-form' },
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Create Your Instead Account'
+	      ),
+	      React.createElement(
+	        'form',
+	        { onSubmit: this._handleSubmit, noValidate: true },
+	        React.createElement(
+	          'label',
+	          { htmlFor: 'email' },
+	          'Email'
+	        ),
+	        React.createElement('input', {
+	          type: 'email',
+	          id: 'email',
+	          value: email,
+	          placeholder: 'youremail@email.com',
+	          className: 'Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)',
+	          onChange: this._update.bind(null, "email"),
+	          onFocus: this._entered.bind(null, "email", false),
+	          onBlur: this._entered.bind(null, "email", true)
+	        }),
+	        React.createElement(LogInError, { toggle: emailEmpty, message: "You can\'t leave this empty" }),
+	        React.createElement(LogInError, { toggle: emailTaken, message: "Someone already has that username. Try another?" }),
+	        React.createElement(LogInError, { toggle: emailInvalid, message: "You\'re email doesn\'t look quite right" }),
+	        React.createElement(
+	          'label',
+	          { htmlFor: 'password' },
+	          'Password'
+	        ),
+	        React.createElement('input', {
+	          type: 'password',
+	          id: 'password',
+	          value: password,
+	          className: '',
+	          onChange: this._update.bind(null, "password"),
+	          onFocus: this._entered.bind(null, "password", false),
+	          onBlur: this._entered.bind(null, "password", true)
+	        }),
+	        React.createElement(LogInError, { toggle: passwordEmpty, message: "You can\'t leave this empty" }),
+	        React.createElement(LogInError, { toggle: passwordShort, message: "Short passwords are easy to guess. Try one with at least 8 characters." }),
+	        React.createElement(LogInError, { toggle: passwordLong, message: "Must have at most 100 characters" }),
+	        React.createElement(
+	          'label',
+	          {
+	            htmlFor: 'confirmation',
+	            className: url === "users" ? "active" : "hidden"
+	          },
+	          'Confirm Password'
+	        ),
+	        React.createElement('input', {
+	          type: 'password',
+	          id: 'confirmation',
+	          value: confirmation,
+	          className: url === "users" ? "active" : "hidden",
+	          onChange: this._update.bind(null, "confirmation"),
+	          onFocus: this._entered.bind(null, "confirmation", false),
+	          onBlur: this._entered.bind(null, "confirmation", true)
+	        }),
+	        React.createElement(LogInError, { toggle: confirmationEmpty, message: "You can\'t leave this empty" }),
+	        React.createElement(LogInError, { toggle: noMatch, message: "These passwords don\'t match. Try again?" }),
+	        React.createElement('input', {
+	          type: 'submit',
+	          value: url === "session" ? "Log In" : "Create Account" })
+	      ),
+	      React.createElement(
+	        'div',
+	        { onClick: this._update.bind(null, "url") },
+	        url === "session" ? "Create Account" : "Log In"
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = LogIn;
 
 /***/ }
 /******/ ]);

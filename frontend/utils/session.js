@@ -2,22 +2,6 @@ var SessionActions = require('../actions/session');
 
 SessionUtil = {
 
-  signIn: function (credentials, callback) {
-    $.ajax({
-      type: "POST",
-      url: "/api/session",
-      dataType: "json",
-      data: credentials,
-      success: function (currentUser) {
-        SessionActions.currentUser(currentUser);
-        callback && callback();
-      },
-      error: function () {
-        console.log('SessionUtil#signIn error');
-      },
-    });
-  },
-
   signOut: function () {
     $.ajax({
       type: "DELETE",

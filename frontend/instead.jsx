@@ -3,8 +3,9 @@ var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
 
 var App = require('./components/app');
-var SignUp = require('./components/signUp');
+var LogIn = require('./components/logIn');
 var Jobs = require('./components/jobs');
+var Profile = require('./components/profile');
 
 var UserUtil = require('./utils/userUtil');
 var SessionUtil = require('./utils/session');
@@ -19,11 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
       <Route path='/' component={App} >
-        <IndexRoute component={Jobs} />
+        <IndexRoute component={Profile} />
       </Route>
 
-      <Route path='/signup' component={SignUp}/>
-      <Route path='/signin' />
+      <Route path='/login' component={LogIn}/>
 
     </Router>,
     document.getElementById('root')

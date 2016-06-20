@@ -1,3 +1,6 @@
+var AppDispatcher = require('../dispatcher/appDispatcher');
+var SessionConstants = require('../constants/session');
+
 SessionActions = {
 
   currentUser: function (currentUser) {

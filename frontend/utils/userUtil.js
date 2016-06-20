@@ -3,18 +3,18 @@ var SessionActions = require('../actions/session');
 
 UserUtil = {
 
-  signUp: function (credentials, callback) {
+  signIn: function (url, credentials, callback) {
     $.ajax({
       type: "POST",
-      url: "/api/users",
+      url: "/api/" + url,
       dataType: "json",
       data: {user: credentials},
-      success: function (currentUser) {
+      success: function (currentUser) { 
         SessionActions.currentUser(currentUser);
         callback && callback();
       },
       error: function () {
-        console.log('UserUtil#signUp error');
+        console.log('UserUtil#signIn error');
       },
     });
   },

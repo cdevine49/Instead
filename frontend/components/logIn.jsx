@@ -6,11 +6,10 @@ var UserStore = require('../stores/user');
 var LogInError = require('./login/error');
 
 String.prototype.empty = function () {
-  console.log(this.toString());
   return this.toString() === "";
 };
 
-var SignUp = React.createClass({
+var LogIn = React.createClass({
 
   contextTypes: {
     router: React.PropTypes.object.isRequired
@@ -27,7 +26,7 @@ var SignUp = React.createClass({
       confirmation: '',
       confirmationEntered: false,
 
-      _type: "session"
+      url: "session"
     };
   },
 
@@ -43,8 +42,8 @@ var SignUp = React.createClass({
     case "confirmation":
       this.setState({confirmation: input});
       break;
-    case "_type":
-      this.setState({ _type: this.state._type === "session" ? "user" : "session"});
+    case "url":
+      this.setState({ url: this.state.url === "session" ? "users" : "session"});
     }
   },
 
@@ -66,7 +65,8 @@ var SignUp = React.createClass({
   },
 
   _handleSubmit: function() {
-    UserUtil.signUp(this.state._type, {email: this.state.email, password: this.state.password}, function () {
+    var router = this.context.router;
+    UserUtil.signIn(this.state.url, {email: this.state.email, password: this.state.password}, function () {
       router.push("/");
     });
   },
@@ -78,29 +78,33 @@ var SignUp = React.createClass({
     var email = this.state.email;
     var password = this.state.password;
     var confirmation = this.state.confirmation;
+    var url = this.state.url;
+    var loggingIn = url === "session";
 
     var emailError = this.state.emailEntered;
-    var passwordError = this.state.passwordEntered;
-    var confirmError = this.state.confirmationEntered;
+    var passwordError = !loggingIn && this.state.passwordEntered;
+    var confirmError = !loggingIn && this.state.confirmationEntered;
 
     var emailEmpty = emailError && email.empty();
-    var emailTaken = emailError && !UserStore.emailAvailable();
+    var emailTaken = !loggingIn && emailError && !UserStore.emailAvailable();
     var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 
     var passwordEmpty = passwordError && password.empty();
-    var passwordShort = passwordError && !password.empty() && password.length < 8;
-    var passwordLong = passwordError && password.length > 100;
+    var passwordShort = !loggingIn && passwordError && !password.empty() && password.length < 8;
+    var passwordLong = !loggingIn && passwordError && password.length > 100;
 
     var confirmationEmpty = confirmError && password.empty() && confirmation.empty();
+    var noMatch = confirmError && password !== confirmation;
 
     return (
       <main className="sign-up-form">
         <h1>Create Your Instead Account</h1>
-        <form noValidate>
+        <form onSubmit={this._handleSubmit} noValidate>
           <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
+            value={email}
             placeholder="youremail@email.com"
             className="Use the user store to set: this.state.emailEntered && UserStore.emailExists(this.state.email)"
             onChange={this._update.bind(null, "email")}
@@ -115,6 +119,7 @@ var SignUp = React.createClass({
           <input
             type="password"
             id="password"
+            value={password}
             className=""
             onChange={this._update.bind(null, "password")}
             onFocus={this._entered.bind(null, "password", false)}
@@ -125,26 +130,34 @@ var SignUp = React.createClass({
         <LogInError toggle={passwordShort} message={"Short passwords are easy to guess. Try one with at least 8 characters."} />
         <LogInError toggle={passwordLong} message={"Must have at most 100 characters"} />
 
-          <label htmlFor="confirmation">Confirm Password</label>
+          <label
+            htmlFor="confirmation"
+            className={url === "users" ? "active" : "hidden"}
+            >Confirm Password</label>
+
           <input
             type="password"
             id="confirmation"
-            className=""
+            value={confirmation}
+            className={url === "users" ? "active" : "hidden"}
             onChange={this._update.bind(null, "confirmation")}
             onFocus={this._entered.bind(null, "confirmation", false)}
             onBlur={this._entered.bind(null, "confirmation", true)}
           />
 
         <LogInError toggle={confirmationEmpty} message={"You can\'t leave this empty"} />
+        <LogInError toggle={noMatch} message={"These passwords don\'t match. Try again?"} />
 
-        <button onSubmit={this._handleSubmit}>Create Account</button>
+        <input
+          type="submit"
+          value={ url === "session" ? "Log In" : "Create Account" } />
 
         </form>
-        <div onClick={this._update.bind(null, "_type")}>{ this.state._type === "session" ? "Create Account" : "Log In" }</div>
+        <div onClick={this._update.bind(null, "url")}>{ url === "session" ? "Create Account" : "Log In" }</div>
       </main>
     );
   }
 
 });
 
-module.exports = SignUp;
+module.exports = LogIn;
