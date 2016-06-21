@@ -38,7 +38,8 @@ class Api::UsersController < ApplicationController
   end
 
   def unique
-    render json: !User.find_by(user_params)
+    render json: User.first
+    # render json: !User.find_by(user_params)
   end
 
   private

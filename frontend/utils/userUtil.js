@@ -4,21 +4,23 @@ var SessionActions = require('../actions/session');
 UserUtil = {
 
   signIn: function (url, credentials, callback) {
-    $.ajax({
-      type: "POST",
-      url: "/api/" + url,
-      dataType: "json",
-      data: {user: credentials},
-      success: function (currentUser) { 
-        SessionActions.currentUser(currentUser);
-        callback && callback();
-      },
-      error: function () {
-        console.log('UserUtil#signIn error');
-      },
+    return new Promise( function(resolve, reject) {
+      $.ajax({
+        type: "POST",
+        url: "/api/" + url,
+        dataType: "json",
+        data: {user: credentials},
+        success: function (currentUser) {
+          // SessionActions.currentUser(currentUser);
+          resolve();
+        },
+        error: function (response) {
+          debugger
+          reject(response);
+        },
+      });
     });
   },
-
 
   checkEmailUnique: function (email, callback) {
     $.ajax({

@@ -65,13 +65,12 @@ var LogIn = React.createClass({
   },
 
   _handleSubmit: function() {
-    var router = this.context.router;
-    UserUtil.signIn(this.state.url, {email: this.state.email, password: this.state.password}, function () {
-      router.push("/");
-    });
-  },
+    var success = function () { this.context.router.push("/"); }.bind(this);
 
-  /* Find out if possible to get current blur or focus state of input field and use for class */
+    UserUtil.signIn(this.state.url, {email: this.state.email, password: this.state.password})
+    .then(success)
+    .catch(function (response) {console.log("failed " + response);});
+  },
 
   render: function() {
 

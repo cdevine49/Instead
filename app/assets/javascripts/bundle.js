@@ -25934,18 +25934,21 @@
 	UserUtil = {
 	
 	  signIn: function (url, credentials, callback) {
-	    $.ajax({
-	      type: "POST",
-	      url: "/api/" + url,
-	      dataType: "json",
-	      data: { user: credentials },
-	      success: function (currentUser) {
-	        SessionActions.currentUser(currentUser);
-	        callback && callback();
-	      },
-	      error: function () {
-	        console.log('UserUtil#signIn error');
-	      }
+	    return new Promise(function (resolve, reject) {
+	      $.ajax({
+	        type: "POST",
+	        url: "/api/" + url,
+	        dataType: "json",
+	        data: { user: credentials },
+	        success: function (currentUser) {
+	          // SessionActions.currentUser(currentUser);
+	          resolve();
+	        },
+	        error: function (response) {
+	          debugger;
+	          reject(response);
+	        }
+	      });
 	    });
 	  },
 	
@@ -33185,13 +33188,14 @@
 	  },
 	
 	  _handleSubmit: function () {
-	    var router = this.context.router;
-	    UserUtil.signIn(this.state.url, { email: this.state.email, password: this.state.password }, function () {
-	      router.push("/");
+	    var success = function () {
+	      this.context.router.push("/");
+	    }.bind(this);
+	
+	    UserUtil.signIn(this.state.url, { email: this.state.email, password: this.state.password }).then(success).catch(function (response) {
+	      console.log("failed " + response);
 	    });
 	  },
-	
-	  /* Find out if possible to get current blur or focus state of input field and use for class */
 	
 	  render: function () {
 	
