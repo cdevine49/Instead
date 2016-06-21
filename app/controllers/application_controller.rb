@@ -35,12 +35,10 @@ class ApplicationController < ActionController::Base
   end
 
 	def require_logged_in!
-	   unless logged_in?
-       	render text: "You are not logged in", status: 401
-      end
+   	render json: { message: "You must be logged in to log out" }, status: 401 unless logged_in?
 	end
 
   def require_logged_out!
-    render json: { message: "You are logged in" } if logged_in?
+    render json: { message: "You are already logged in" }, status: 401 if logged_in?
   end
 end

@@ -68,7 +68,7 @@
 	    { history: hashHistory },
 	    React.createElement(
 	      Route,
-	      { path: '/', component: App },
+	      { path: '/', component: App, onEnter: _ensureLoggedIn },
 	      React.createElement(IndexRoute, { component: Profile })
 	    ),
 	    React.createElement(Route, { path: '/login', component: LogIn })
@@ -84,7 +84,7 @@
 	
 	  function _redirectUnlessLoggedIn() {
 	    if (!SessionStore.isLoggedIn()) {
-	      replace('/signup');
+	      replace('/login');
 	    }
 	    callback();
 	  }
@@ -32832,9 +32832,7 @@
 	      success: function (currentUser) {
 	        SessionActions.currentUser(currentUser);
 	      },
-	      error: function () {
-	        console.log('SessionUtil#fetchCurrentUser error');
-	      },
+	      error: function (message) {},
 	      complete: function () {
 	        completion && completion();
 	      }

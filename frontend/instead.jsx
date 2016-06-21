@@ -19,7 +19,7 @@ var IndexRoute = ReactRouter.IndexRoute;
 document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
-      <Route path='/' component={App} >
+      <Route path='/' component={App} onEnter={_ensureLoggedIn} >
         <IndexRoute component={Profile} />
       </Route>
 
@@ -39,7 +39,7 @@ function _ensureLoggedIn(nextState, replace, callback) {
 
   function _redirectUnlessLoggedIn() {
     if (!SessionStore.isLoggedIn()) {
-      replace('/signup');
+      replace('/login');
     }
     callback();
   }

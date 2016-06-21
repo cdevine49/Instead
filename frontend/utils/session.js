@@ -24,8 +24,8 @@ SessionUtil = {
       success: function (currentUser) {
         SessionActions.currentUser(currentUser);
       },
-      error: function () {
-        console.log('SessionUtil#fetchCurrentUser error');
+      error: function (message) {
+        
       },
       complete: function () {
         completion && completion();
