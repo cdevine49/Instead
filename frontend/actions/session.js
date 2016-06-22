@@ -10,6 +10,14 @@ SessionActions = {
     };
 
     AppDispatcher.dispatch(action);
+  },
+
+  signOut: function () {
+    var action = {
+      actionType: SessionConstants.SIGN_OUT
+    };
+
+    AppDispatcher.dispatch(action);
   }
 
 };

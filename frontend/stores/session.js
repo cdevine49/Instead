@@ -27,7 +27,7 @@ SessionStore.__onDispatch = function (payload) {
       _currentUserFound = true;
       SessionStore.__emitChange();
       break;
-    case SessionConstants.LOGOUT:
+    case SessionConstants.SIGN_OUT:
       _currentUser = null;
       _currentUserFound = false;
       SessionStore.__emitChange();

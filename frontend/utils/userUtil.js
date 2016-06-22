@@ -15,7 +15,6 @@ UserUtil = {
           resolve();
         },
         error: function (response) {
-          debugger
           reject(response);
         },
       });

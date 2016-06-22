@@ -61,7 +61,6 @@
 	var Route = __webpack_require__(168).Route;
 	var hashHistory = ReactRouter.hashHistory;
 	var IndexRoute = ReactRouter.IndexRoute;
-	// onEnter={_ensureLoggedIn}
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(
 	    Router,
@@ -71,7 +70,7 @@
 	      { path: '/', component: App, onEnter: _ensureLoggedIn },
 	      React.createElement(IndexRoute, { component: Profile })
 	    ),
-	    React.createElement(Route, { path: '/login', component: LogIn })
+	    React.createElement(Route, { path: '/login', component: LogIn, onEnter: _ensureLoggedOut })
 	  ), document.getElementById('root'));
 	});
 	
@@ -85,6 +84,21 @@
 	  function _redirectUnlessLoggedIn() {
 	    if (!SessionStore.isLoggedIn()) {
 	      replace('/login');
+	    }
+	    callback();
+	  }
+	}
+	
+	function _ensureLoggedOut(nextState, replace, callback) {
+	  if (!SessionStore.currentUserFound()) {
+	    SessionUtil.findCurrentUser(_redirectUnlessLoggedOut);
+	  } else {
+	    _redirectUnlessLoggedOut();
+	  }
+	
+	  function _redirectUnlessLoggedOut() {
+	    if (SessionStore.isLoggedIn()) {
+	      replace('/');
 	    }
 	    callback();
 	  }
@@ -25899,6 +25913,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var Header = __webpack_require__(276);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -25913,9 +25928,9 @@
 	        null,
 	        'Instead'
 	      ),
+	      React.createElement(Header, null),
 	      this.props.children
 	    );
-	    // <Header />
 	  }
 	
 	});
@@ -25945,7 +25960,6 @@
 	          resolve();
 	        },
 	        error: function (response) {
-	          debugger;
 	          reject(response);
 	        }
 	      });
@@ -26289,16 +26303,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 238 */
-/***/ function(module, exports) {
-
-	UserConstants = {
-	  EMAIL_UNIQUE: 'EMAIL_UNIQUE'
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
+/* 238 */,
 /* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -26330,7 +26335,7 @@
 	      _currentUserFound = true;
 	      SessionStore.__emitChange();
 	      break;
-	    case SessionConstants.LOGOUT:
+	    case SessionConstants.SIGN_OUT:
 	      _currentUser = null;
 	      _currentUserFound = false;
 	      SessionStore.__emitChange();
@@ -32799,6 +32804,14 @@
 	    };
 	
 	    AppDispatcher.dispatch(action);
+	  },
+	
+	  signOut: function () {
+	    var action = {
+	      actionType: SessionConstants.SIGN_OUT
+	    };
+	
+	    AppDispatcher.dispatch(action);
 	  }
 	
 	};
@@ -32814,16 +32827,19 @@
 	SessionUtil = {
 	
 	  signOut: function () {
-	    $.ajax({
-	      type: "DELETE",
-	      url: "/api/session",
-	      dataType: "json",
-	      success: function () {
-	        SessionActions.logout();
-	      },
-	      error: function () {
-	        console.log('SessionUtil#signOut error');
-	      }
+	    return new Promise(function (resolve, reject) {
+	      $.ajax({
+	        type: "DELETE",
+	        url: "/api/session",
+	        dataType: "json",
+	        success: function () {
+	          SessionActions.signOut();
+	          resolve();
+	        },
+	        error: function () {
+	          reject();
+	        }
+	      });
 	    });
 	  },
 	
@@ -32851,7 +32867,8 @@
 /***/ function(module, exports) {
 
 	SessionConstants = {
-	  CURRENT_USER: 'CURRENT_USER'
+	  CURRENT_USER: 'CURRENT_USER',
+	  SIGN_OUT: 'SIGN_OUT'
 	};
 	
 	module.exports = SessionConstants;
@@ -32943,7 +32960,7 @@
 /***/ function(module, exports) {
 
 	JobConstants = {
-	  CURRENT_USER: 'CURRENT_USER'
+	
 	  // Change above
 	};
 	
@@ -33062,7 +33079,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(234);
-	var UserConstants = __webpack_require__(238);
+	var UserConstants = __webpack_require__(272);
 	
 	UserActions = {
 	
@@ -33102,18 +33119,6 @@
 	});
 	
 	module.exports = LogInError;
-	
-	Array.prototype.all = function (func) {
-	  func = func || function (el) {
-	    return el;
-	  };
-	  for (var i = 0; i < this.length; i++) {
-	    if (!func(this[i])) {
-	      return false;
-	    }
-	  }
-	  return true;
-	};
 
 /***/ },
 /* 275 */
@@ -33174,8 +33179,10 @@
 	    switch (option) {
 	      case "email":
 	        var callback = this.setState({ emailEntered: boolean });
-	        if (boolean) {
+	        if (boolean && this.state.url === "users") {
 	          UserUtil.checkEmailUnique({ email: this.state.email }, callback);
+	        } else {
+	          this.setState({ emailEntered: boolean });
 	        }
 	        break;
 	      case "password":
@@ -33210,7 +33217,7 @@
 	    var confirmError = !loggingIn && this.state.confirmationEntered;
 	
 	    var emailEmpty = emailError && email.empty();
-	    var emailTaken = !loggingIn && emailError && !UserStore.emailAvailable();
+	    var emailTaken = !loggingIn && emailError && UserStore.emailAvailable();
 	    var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 	
 	    var passwordEmpty = passwordError && password.empty();
@@ -33290,7 +33297,7 @@
 	          value: url === "session" ? "Log In" : "Create Account" })
 	      ),
 	      React.createElement(
-	        'div',
+	        'button',
 	        { onClick: this._update.bind(null, "url") },
 	        url === "session" ? "Create Account" : "Log In"
 	      )
@@ -33299,7 +33306,70 @@
 	
 	});
 	
+	// Get the Create Account and Log In buttons to do client side validations
+	
 	module.exports = LogIn;
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LogOut = __webpack_require__(278);
+	
+	var Header = React.createClass({
+	  displayName: 'Header',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(LogOut, null)
+	    );
+	  }
+	
+	});
+	
+	module.exports = Header;
+
+/***/ },
+/* 277 */,
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SessionUtil = __webpack_require__(258);
+	
+	var SignOut = React.createClass({
+	  displayName: 'SignOut',
+	
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'button',
+	      { onClick: this._onSignOut },
+	      'Logout'
+	    );
+	  },
+	
+	  _onSignOut: function () {
+	    var success = function () {
+	      this.context.router.push("/login");
+	    }.bind(this);
+	
+	    SessionUtil.signOut().then(success).catch(function (response) {
+	      console.log("failed " + response);
+	    });
+	  }
+	
+	});
+	
+	module.exports = SignOut;
 
 /***/ }
 /******/ ]);

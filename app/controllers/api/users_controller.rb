@@ -1,12 +1,8 @@
 class Api::UsersController < ApplicationController
-  before_filter :require_no_current_user!, :only => [:new, :create]
-
-  def new
-    @user = User.new
-  end
+  before_action :require_logged_out!, :only => [:create]
+  before_action :require_logged_in!, :only => [:update]
 
   def create
-    debugger
     user = User.new(user_params)
 
     if user.save
@@ -31,6 +27,7 @@ class Api::UsersController < ApplicationController
 
   def show
     @user = User.find_by(user_params)
+    render :show
   end
 
   def destroy
@@ -38,8 +35,7 @@ class Api::UsersController < ApplicationController
   end
 
   def unique
-    render json: User.first
-    # render json: !User.find_by(user_params)
+    render json: !User.find_by(user_params)
   end
 
   private

@@ -1,4 +1,5 @@
 var React = require('react');
+var Header = require('./header');
 
 var App = React.createClass({
 
@@ -6,10 +7,10 @@ var App = React.createClass({
     return (
       <main>
         <h1>Instead</h1>
+        <Header />
         {this.props.children}
       </main>
     );
-    // <Header />
   }
 
 });

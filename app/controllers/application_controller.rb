@@ -26,14 +26,6 @@ class ApplicationController < ActionController::Base
 
   # before actions
 
-  def require_current_user!
-    render json: { message: "You must be logged in" } unless current_user
-  end
-
-  def require_no_current_user!
-    render json: { message: "Can't create account while logged in" } if current_user
-  end
-
 	def require_logged_in!
    	render json: { message: "You must be logged in to log out" }, status: 401 unless logged_in?
 	end

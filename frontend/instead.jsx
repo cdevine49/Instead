@@ -15,7 +15,6 @@ var Router = require('react-router').Router;
 var Route = require('react-router').Route;
 var hashHistory = ReactRouter.hashHistory;
 var IndexRoute = ReactRouter.IndexRoute;
-// onEnter={_ensureLoggedIn}
 document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <IndexRoute component={Profile} />
       </Route>
 
-      <Route path='/login' component={LogIn}/>
+      <Route path='/login' component={LogIn} onEnter={_ensureLoggedOut} />
 
     </Router>,
     document.getElementById('root')
@@ -40,6 +39,21 @@ function _ensureLoggedIn(nextState, replace, callback) {
   function _redirectUnlessLoggedIn() {
     if (!SessionStore.isLoggedIn()) {
       replace('/login');
+    }
+    callback();
+  }
+}
+
+function _ensureLoggedOut(nextState, replace, callback) {
+  if (!SessionStore.currentUserFound()) {
+    SessionUtil.findCurrentUser(_redirectUnlessLoggedOut);
+  } else {
+    _redirectUnlessLoggedOut();
+  }
+
+  function _redirectUnlessLoggedOut() {
+    if (SessionStore.isLoggedIn()) {
+      replace('/');
     }
     callback();
   }

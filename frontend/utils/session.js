@@ -3,16 +3,19 @@ var SessionActions = require('../actions/session');
 SessionUtil = {
 
   signOut: function () {
-    $.ajax({
-      type: "DELETE",
-      url: "/api/session",
-      dataType: "json",
-      success: function () {
-        SessionActions.logout();
-      },
-      error: function () {
-        console.log('SessionUtil#signOut error');
-      },
+    return new Promise( function(resolve, reject) {
+      $.ajax({
+        type: "DELETE",
+        url: "/api/session",
+        dataType: "json",
+        success: function () {
+          SessionActions.signOut();
+          resolve();
+        },
+        error: function () {
+          reject();
+        },
+      });
     });
   },
 
@@ -25,7 +28,6 @@ SessionUtil = {
         SessionActions.currentUser(currentUser);
       },
       error: function (message) {
-        
       },
       complete: function () {
         completion && completion();

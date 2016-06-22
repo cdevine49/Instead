@@ -13,11 +13,3 @@ var LogInError = React.createClass({
 });
 
 module.exports = LogInError;
-
-Array.prototype.all = function (func) {
-  func = func || function (el) { return el; };
-  for (var i = 0; i < this.length; i++) {
-    if (!func(this[i])) { return false; }
-  }
-  return true;
-};

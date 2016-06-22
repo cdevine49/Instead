@@ -51,8 +51,10 @@ var LogIn = React.createClass({
     switch (option) {
     case "email":
     var callback = this.setState({emailEntered: boolean});
-      if (boolean) {
+      if (boolean && this.state.url === "users") {
         UserUtil.checkEmailUnique({email: this.state.email}, callback);
+      } else {
+        this.setState({emailEntered: boolean});
       }
       break;
     case "password":
@@ -85,7 +87,7 @@ var LogIn = React.createClass({
     var confirmError = !loggingIn && this.state.confirmationEntered;
 
     var emailEmpty = emailError && email.empty();
-    var emailTaken = !loggingIn && emailError && !UserStore.emailAvailable();
+    var emailTaken = !loggingIn && emailError && UserStore.emailAvailable();
     var emailInvalid = emailError && !email.empty() && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 
     var passwordEmpty = passwordError && password.empty();
@@ -152,11 +154,13 @@ var LogIn = React.createClass({
           value={ url === "session" ? "Log In" : "Create Account" } />
 
         </form>
-        <div onClick={this._update.bind(null, "url")}>{ url === "session" ? "Create Account" : "Log In" }</div>
+        <button onClick={this._update.bind(null, "url")}>{ url === "session" ? "Create Account" : "Log In" }</button>
       </main>
     );
   }
 
 });
+
+// Get the Create Account and Log In buttons to do client side validations
 
 module.exports = LogIn;
