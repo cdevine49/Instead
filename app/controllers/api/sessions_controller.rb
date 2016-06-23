@@ -4,7 +4,7 @@ class Api::SessionsController < ApplicationController
 
   def show
     if logged_in?
-      @user = current_user
+      # @user = current_user
       render :show
     else
       render json: { message: "Please login" }, status: 401
@@ -14,10 +14,10 @@ class Api::SessionsController < ApplicationController
   def create
     email = params[:user][:email]
     password = params[:user][:password]
-    @user = User.find_by_credentials(email, password)
+    user = User.find_by_credentials(email, password)
 
-    if @user && @user.is_password?(params[:user][:password])
-      login!(@user)
+    if user && user.is_password?(params[:user][:password])
+      login!(user)
       render :show
     else
       render json: { message: "Invalid Username or Password" }, status: 401

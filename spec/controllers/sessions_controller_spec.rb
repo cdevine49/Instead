@@ -12,15 +12,16 @@ RSpec.describe Api::SessionsController, type: :controller do
     context "when a user is logged in" do
       before(:each) do
           allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
-          get :show
+          get :show, format: :json
       end
 
       it "should respond with a 200 status" do
         expect(response.status).to eq(200)
       end
 
-      it "should return the current user's email" do
-        expect(response.body).to eq(user.email)
+      it "should render the show template" do
+        expect(response).to render_template(:show)
+        # expect(response.body).to eq(user.email)
       end
     end
 
@@ -47,7 +48,7 @@ RSpec.describe Api::SessionsController, type: :controller do
     context "when a user is logged in" do
       before(:each) do
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
-        post :create
+        post :create, format: :json
       end
 
       it "should respond with a 401 status" do
@@ -63,22 +64,23 @@ RSpec.describe Api::SessionsController, type: :controller do
       context "creating a valid session" do
 
         before(:each) do
-          post :create, { user: { email: user.email, password: user.password } }
+          post :create, user: { email: user.email, password: user.password }, format: :json
         end
 
         it "should respond with a 200 status" do
           expect(response.status).to eq(200)
         end
 
-        it "should return the current user's email" do
-          expect(response.body).to eq(user.email)
+        it "should render the show template" do
+          expect(response).to render_template(:show)
+          # expect(response.body).to eq(user.email)
         end
       end
 
       context "creating an invalid session" do
 
         before(:each) do
-          post :create, { user: { email: user.email, password: 'bad_password' } }
+          post :create, user: { email: user.email, password: 'bad_password' }
         end
 
         it "should respond with a 401 status" do

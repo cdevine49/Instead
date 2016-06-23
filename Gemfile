@@ -52,6 +52,7 @@ group :test do
   gem 'guard-rspec', require: false
   gem 'launchy'
   gem 'shoulda-matchers'
+  gem 'api_matchers'
 end
 
 gem 'newrelic_rpm'

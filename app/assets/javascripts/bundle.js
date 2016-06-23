@@ -25956,7 +25956,7 @@
 	        dataType: "json",
 	        data: { user: credentials },
 	        success: function (currentUser) {
-	          // SessionActions.currentUser(currentUser);
+	          SessionActions.currentUser(currentUser);
 	          resolve();
 	        },
 	        error: function (response) {
