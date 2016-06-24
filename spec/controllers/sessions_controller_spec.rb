@@ -2,12 +2,14 @@ require 'rails_helper'
 
 RSpec.describe Api::SessionsController, type: :controller do
 
-  it { should use_before_action(:require_logged_out!) }
-  it { should use_before_action(:require_logged_in!) }
+  describe "before actions" do
+    it { should use_before_action(:require_logged_out!) }
+    it { should use_before_action(:require_logged_in!) }
+  end
 
+  let(:user) { FactoryGirl.build(:user) }
 
   describe "#show" do
-    subject(:user) { FactoryGirl.build(:user) }
 
     context "when a user is logged in" do
       before(:each) do
@@ -16,12 +18,11 @@ RSpec.describe Api::SessionsController, type: :controller do
       end
 
       it "should respond with a 200 status" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       it "should render the show template" do
         expect(response).to render_template(:show)
-        # expect(response.body).to eq(user.email)
       end
     end
 
@@ -32,10 +33,10 @@ RSpec.describe Api::SessionsController, type: :controller do
       end
 
       it "should respond with a 401 status" do
-        expect(response.status).to eq(401)
+        expect(response).to have_http_status(401)
       end
 
-      it "should return the correct method" do
+      it "should return the correct message" do
         expect(JSON.parse(response.body)["message"]).to eq("Please login")
       end
     end
@@ -43,7 +44,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 
   describe "#create" do
 
-    subject(:user) { FactoryGirl.create(:user) }
+    # subject(:user) { FactoryGirl.create(:user) }
 
     context "when a user is logged in" do
       before(:each) do
@@ -51,8 +52,8 @@ RSpec.describe Api::SessionsController, type: :controller do
         post :create, format: :json
       end
 
-      it "should respond with a 401 status" do
-        expect(response.status).to eq(401)
+      it "should respond with a 403 status" do
+        expect(response).to have_http_status(403)
       end
 
       it "should return the correct message" do
@@ -64,11 +65,12 @@ RSpec.describe Api::SessionsController, type: :controller do
       context "creating a valid session" do
 
         before(:each) do
+          user.save
           post :create, user: { email: user.email, password: user.password }, format: :json
         end
 
         it "should respond with a 200 status" do
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status(200)
         end
 
         it "should render the show template" do
@@ -84,10 +86,10 @@ RSpec.describe Api::SessionsController, type: :controller do
         end
 
         it "should respond with a 401 status" do
-          expect(response.status).to eq(401)
+          expect(response).to have_http_status(401)
         end
 
-        it "should return the correct method" do
+        it "should return the correct message" do
           expect(JSON.parse(response.body)["message"]).to eq("Invalid Username or Password")
         end
       end
@@ -96,7 +98,7 @@ RSpec.describe Api::SessionsController, type: :controller do
 
   describe "#destroy" do
 
-    subject(:user) { FactoryGirl.create(:user) }
+    # subject(:user) { FactoryGirl.create(:user) }
 
     context "when there is a user logged in" do
 
@@ -106,7 +108,7 @@ RSpec.describe Api::SessionsController, type: :controller do
       end
 
       it "should respond with a 200 status" do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(200)
       end
 
       it "should return the correct message" do
@@ -122,11 +124,11 @@ RSpec.describe Api::SessionsController, type: :controller do
       end
 
       it "should respond with a 401 status" do
-        expect(response.status).to eq(401)
+        expect(response).to have_http_status(401)
       end
 
       it "should return the correct message" do
-        expect(JSON.parse(response.body)["message"]).to eq("You must be logged in to log out")
+        expect(JSON.parse(response.body)["message"]).to eq("You need to log in first")
       end
     end
   end

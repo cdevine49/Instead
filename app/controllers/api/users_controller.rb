@@ -1,6 +1,7 @@
 class Api::UsersController < ApplicationController
-  before_action :require_logged_out!, :only => [:create]
-  before_action :require_logged_in!, :only => [:update]
+  before_action :require_logged_out!, :only => [:create, :unique]
+  before_action :require_logged_in!, :only => [:update, :destroy]
+  before_action :require_current_user!, :only => [:update, :destroy]
 
   def create
     @user = User.new(user_params)
@@ -9,16 +10,17 @@ class Api::UsersController < ApplicationController
       login!(@user)
       render :show
     else
-      render json: { message: "User wasn't saved" }
+      render json: { message: "User wasn't saved" }, status: 422
     end
   end
 
   def update
+    # current use requirement
     @user = User.find(params[:id])
     if @user.update(user_params)
       render :show
     else
-      render json: { message: "User wasn't updated" }
+      render json: { message: "User wasn't updated" }, status: 422
     end
   end
 
@@ -32,7 +34,8 @@ class Api::UsersController < ApplicationController
   # end
 
   def destroy
-
+    User.find(params[:id]).destroy
+    render json: { message: "You're account has been closed" }
   end
 
   def unique

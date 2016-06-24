@@ -26,11 +26,15 @@ class ApplicationController < ActionController::Base
 
   # before actions
 
+  def require_current_user!
+    render json: { message: "This is not your account" }, status: 403 unless current_user == User.find(params[:id])
+  end
+
 	def require_logged_in!
-   	render json: { message: "You must be logged in to log out" }, status: 401 unless logged_in?
+   	render json: { message: "You need to log in first" }, status: 401 unless logged_in?
 	end
 
   def require_logged_out!
-    render json: { message: "You are already logged in" }, status: 401 if logged_in?
+    render json: { message: "You are already logged in" }, status: 403 if logged_in?
   end
 end

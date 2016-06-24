@@ -4,7 +4,7 @@ class Api::SessionsController < ApplicationController
 
   def show
     if logged_in?
-      # @user = current_user
+      @user = current_user
       render :show
     else
       render json: { message: "Please login" }, status: 401

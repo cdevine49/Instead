@@ -1,4 +1,5 @@
 var SessionActions = require('../actions/session');
+var SessionAction = require('../stores/session');
 
 SessionUtil = {
 
@@ -24,8 +25,8 @@ SessionUtil = {
       type: "GET",
       url: "/api/session",
       dataType: "json",
-      success: function (currentUser) {
-        SessionActions.currentUser(currentUser);
+      success: function (response) {
+        SessionActions.currentUser(response);
       },
       error: function (message) {
       },
