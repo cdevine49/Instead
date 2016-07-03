@@ -1,0 +1,19 @@
+---
+development:
+  cloud_name: conor-devine
+  api_key: '683547715254594'
+  api_secret: VJ1dPr9CzbrcHM-gFCEeAl97pRU
+  enhance_image_tag: true
+  static_image_support: false
+production:
+  cloud_name: conor-devine
+  api_key: '683547715254594'
+  api_secret: VJ1dPr9CzbrcHM-gFCEeAl97pRU
+  enhance_image_tag: true
+  static_image_support: true
+test:
+  cloud_name: conor-devine
+  api_key: '683547715254594'
+  api_secret: VJ1dPr9CzbrcHM-gFCEeAl97pRU
+  enhance_image_tag: true
+  static_image_support: false

@@ -6,5 +6,6 @@ Rails.application.routes.draw do
       get 'unique', on: :collection
     end
     resource :session, only: [:show, :create, :destroy]
+    resources :user_profiles
   end
 end

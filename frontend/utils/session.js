@@ -1,7 +1,24 @@
 var SessionActions = require('../actions/session');
-var SessionAction = require('../stores/session');
 
 SessionUtil = {
+
+  signIn: function (credentials) {
+    return new Promise( function(resolve, reject) {
+      $.ajax({
+        type: "POST",
+        url: "/api/session",
+        dataType: "json",
+        data: credentials,
+        success: function (currentUser) {
+          SessionActions.currentUser(currentUser);
+          resolve();
+        },
+        error: function (response) {
+          reject(response);
+        },
+      });
+    });
+  },
 
   signOut: function () {
     return new Promise( function(resolve, reject) {

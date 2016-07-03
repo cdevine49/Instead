@@ -6,8 +6,8 @@ var UserConstants = require('../constants/userConstants');
 
 var _unique = true;
 
-UserStore.emailAvailable = function () {
-  return _unique;
+UserStore.emailTaken = function () {
+  return !_unique;
 };
 
 UserStore.__onDispatch = function (payload) {

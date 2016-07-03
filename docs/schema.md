@@ -26,8 +26,11 @@ column name          | data type | details
 id                   | integer   | not null, primary key
 first_name           | string    |
 last_name            | string    |
-last_name            | string    |
 birthday             | date      |
+gender               | string    |
+race                 | string    |
+veteran              | string    |
+disability           | string    |
 about                | text      |
 avatar_file_name     | string    |
 avatar_content_type  | string    |
@@ -47,6 +50,7 @@ town             | string    |
 state            | string    |
 zip_code         | integer   |
 country          | string    |
+profile_id       | integer   | indexed
 
 
 ## posts

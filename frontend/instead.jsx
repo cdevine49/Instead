@@ -4,6 +4,7 @@ var ReactRouter = require('react-router');
 
 var App = require('./components/app');
 var LogIn = require('./components/logIn');
+var SignUp = require('./components/signUp');
 var Jobs = require('./components/jobs');
 var Profile = require('./components/profile');
 
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
       </Route>
 
       <Route path='/login' component={LogIn} onEnter={_ensureLoggedOut} />
+      <Route path='/signup' component={SignUp} onEnter={_ensureLoggedOut} />
 
     </Router>,
     document.getElementById('root')

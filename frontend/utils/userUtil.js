@@ -3,13 +3,13 @@ var SessionActions = require('../actions/session');
 
 UserUtil = {
 
-  signIn: function (url, credentials, callback) {
+  signUp: function (credentials) {
     return new Promise( function(resolve, reject) {
       $.ajax({
         type: "POST",
-        url: "/api/" + url,
+        url: "/api/users",
         dataType: "json",
-        data: {user: credentials},
+        data: credentials,
         success: function (currentUser) {
           SessionActions.currentUser(currentUser);
           resolve();
@@ -21,15 +21,14 @@ UserUtil = {
     });
   },
 
-  checkEmailUnique: function (email, callback) {
+  checkEmailUnique: function (email) {
     $.ajax({
       type: "GET",
       url: "/api/users/unique",
       dataType: "json",
-      data: {user: email},
+      data: email,
       success: function (boolean) {
         UserActions.emailUnique(boolean);
-        callback && callback();
       },
       error: function () {
         console.log('UserUtil#findUser error');
