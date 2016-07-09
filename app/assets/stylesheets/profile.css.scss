@@ -1,0 +1,25 @@
+.profile-pic-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.profile-pic {
+  height: 100%;
+  width: 100%;
+  // background-size: contain;
+}
+
+.profile-pic-edit {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  margin: 5px;
+  font-size: 18px;
+  text-align: center;
+  visibility: hidden;
+}
+
+.profile-pic-wrapper:hover .profile-pic-edit {
+  visibility: visible;
+}

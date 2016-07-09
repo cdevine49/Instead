@@ -33654,32 +33654,14 @@
 	    });
 	  },
 	
-	  updateProfile: function (fields) {
+	  updateProfile: function (data) {
 	    return new Promise(function (resolve, reject) {
 	      $.ajax({
 	        type: "PATCH",
 	        url: "/api/user_profile/",
 	        dataType: "json",
-	        data: fields,
-	        success: function (profile) {
-	          ProfileActions.receiveProfile(profile);
-	          resolve();
-	        },
-	        error: function (response) {
-	          reject(response);
-	        }
-	      });
-	    });
-	  },
-	
-	  uploadProfilePic: function (data) {
-	    return new Promise(function (resolve, reject) {
-	      $.ajax({
-	        type: "PATCH",
-	        url: "/api/user_profile/upload",
 	        processData: false,
 	        contentType: false,
-	        dataType: "json",
 	        data: data,
 	        success: function (profile) {
 	          ProfileActions.receiveProfile(profile);
@@ -33989,16 +33971,28 @@
 	  _upload: function (file) {
 	    var formData = new FormData();
 	    formData.append("user_profile[avatar]", file[0]);
-	    ProfileUtil.uploadProfilePic(formData);
+	    ProfileUtil.updateProfile(formData);
 	  },
 	
 	  render: function () {
-	    return React.createElement('img', {
-	      src: this.props.avatar,
-	      onDrop: this._drop,
-	      onDragEnter: this._stop,
-	      onDragOver: this._stop
-	    });
+	    return React.createElement(
+	      'div',
+	      { className: 'profile-pic-wrapper' },
+	      React.createElement('img', {
+	        src: this.props.avatar,
+	        className: 'profile-pic',
+	        onDrop: this._drop,
+	        onDragEnter: this._stop,
+	        onDragOver: this._stop
+	      }),
+	      React.createElement(
+	        'p',
+	        { className: 'profile-pic-edit' },
+	        'Edit your ',
+	        React.createElement('br', null),
+	        'profile picture'
+	      )
+	    );
 	  }
 	
 	});

@@ -23,17 +23,21 @@ var ProfilePic = React.createClass({
   _upload: function(file) {
     var formData = new FormData();
     formData.append("user_profile[avatar]", file[0]);
-    ProfileUtil.uploadProfilePic(formData);
+    ProfileUtil.updateProfile(formData);
   },
 
   render: function() {
     return (
-      <img
-        src={this.props.avatar}
-        onDrop={this._drop}
-        onDragEnter={this._stop}
-        onDragOver={this._stop}
-        />
+      <div className="profile-pic-wrapper">
+        <img
+          src={this.props.avatar}
+          className="profile-pic"
+          onDrop={this._drop}
+          onDragEnter={this._stop}
+          onDragOver={this._stop}
+          />
+        <p className="profile-pic-edit">Edit your <br />profile picture</p>
+      </div>
     );
   }
 

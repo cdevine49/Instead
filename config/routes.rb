@@ -7,8 +7,6 @@ Rails.application.routes.draw do
       get 'unique', on: :collection
     end
     resource :session, only: [:show, :create, :destroy]
-    resource :user_profile do
-      patch 'upload'
-    end
+    resource :user_profile
   end
 end
