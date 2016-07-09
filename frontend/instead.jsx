@@ -7,6 +7,7 @@ var LogIn = require('./components/logIn');
 var SignUp = require('./components/signUp');
 var Jobs = require('./components/jobs');
 var Profile = require('./components/profile');
+var Home = require('./components/home');
 
 var UserUtil = require('./utils/userUtil');
 var SessionUtil = require('./utils/session');
@@ -20,7 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
   ReactDOM.render(
     <Router history={hashHistory}>
       <Route path='/' component={App} onEnter={_ensureLoggedIn} >
-        <IndexRoute component={Profile} />
+        <IndexRoute component={Home} />
+        <Route path='/:id' component={Profile} />
       </Route>
 
       <Route path='/login' component={LogIn} onEnter={_ensureLoggedOut} />

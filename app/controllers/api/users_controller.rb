@@ -7,6 +7,7 @@ class Api::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
+      @user.profile = UserProfile.new
       login!(@user)
       render :show
     else
@@ -47,4 +48,5 @@ class Api::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:email, :password)
   end
+
 end
