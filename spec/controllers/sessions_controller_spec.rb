@@ -32,8 +32,8 @@ RSpec.describe Api::SessionsController, type: :controller do
         get :show
       end
 
-      it "should respond with a 401 status" do
-        expect(response).to have_http_status(401)
+      it "should respond with a 404 status" do
+        expect(response).to have_http_status(404)
       end
 
       it "should return the correct message" do

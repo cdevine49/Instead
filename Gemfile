@@ -62,7 +62,7 @@ gem 'newrelic_rpm'
 group :development do
   # Run 'annotate' in Terminal to add helpful comments to models.
   gem 'annotate'
-
+  gem 'rails-erd'
   # These two give you a great error handling page.
   # But make sure to never use them in production!
   gem 'better_errors'

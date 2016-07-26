@@ -1,18 +1,50 @@
 var React = require('react');
-var Dropzone = require('react-dropzone');
+var Modal = require('react-modal');
+var ModalStyle = require('../../styles/modalStyle');
+var ProfileStore = require('../../stores/profile');
+var Cropper = require('./edit/cropper');
 
 var ProfilePic = React.createClass({
 
   getInitialState: function() {
     return {
-      imageUrl: '',
-      imageFile: null
+      modalOpen: false,
+      modalImage: null
     };
+  },
+
+  componentDidMount: function() {
+    this.profileStoreToken = ProfileStore.addListener(this._tempAvatarChange);
+  },
+
+  componentWillUnMount: function() {
+    this.profileStoreToken.remove();
+  },
+
+  _tempAvatarChange: function() {
+    this.openModal(ProfileStore.newAvatar());
+  },
+
+  openModal: function(image) {
+    this.setState({ modalImage: image, modalOpen: true });
+    ModalStyle.content.opacity = 0;
+  },
+
+  onModalOpen: function() {
+    ModalStyle.content.opacity = 100;
+  },
+
+  closeModal: function() {
+    this.setState({ modalOpen: false });
   },
 
   _drop: function(e) {
     this._stop(e);
-    this._upload(e.dataTransfer.files);
+    this._tempAvatarUpload(e.dataTransfer.files);
+  },
+
+  _onClick: function() {
+    this.openModal(this.props.avatar);
   },
 
   _stop: function(e) {
@@ -20,10 +52,14 @@ var ProfilePic = React.createClass({
     e.preventDefault();
   },
 
-  _upload: function(file) {
+  _handleUpload: function() {
+
+  },
+
+  _tempAvatarUpload: function(file) {
     var formData = new FormData();
-    formData.append("user_profile[avatar]", file[0]);
-    ProfileUtil.updateProfile(formData);
+    formData.append("photo[image]", file[0]);
+    ProfileUtil.createTempProfilePic(formData);
   },
 
   render: function() {
@@ -36,7 +72,24 @@ var ProfilePic = React.createClass({
           onDragEnter={this._stop}
           onDragOver={this._stop}
           />
-        <p className="profile-pic-edit">Edit your <br />profile picture</p>
+        <p className="profile-pic-edit" onClick={this._onClick} >
+          Edit your <br />profile picture
+        </p>
+
+        <Modal
+          isOpen={this.state.modalOpen}
+          onRequestClose={this.closeModal}
+          style={ModalStyle}
+          onAfterOpen={this.onModalOpen}
+        >
+          <h2>The Modal</h2>
+            <Cropper
+              image={this.state.modalImage}
+              width={270}
+              height={270}
+              upload={this._handleUpload}
+              />
+        </Modal>
       </div>
     );
   }

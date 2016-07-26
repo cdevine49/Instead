@@ -38,8 +38,27 @@ ProfileUtil = {
         },
       });
     });
-  }
+  },
 
+  createTempProfilePic: function (data) {
+    return new Promise( function(resolve, reject) {
+      $.ajax({
+        type: "POST",
+        url: "/api/photos",
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        data: data,
+        success: function (photo) {
+          ProfileActions.receiveTempProfilePic(photo);
+          resolve();
+        },
+        error: function (response) {
+          reject(response);
+        },
+      });
+    });
+  }
 };
 
 module.exports = ProfileUtil;

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160601152329) do
+ActiveRecord::Schema.define(version: 20160722184753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,28 @@ ActiveRecord::Schema.define(version: 20160601152329) do
     t.string   "addressable_type"
     t.integer  "addressable_id"
     t.string   "_type"
+  end
+
+  create_table "photo_joins", force: :cascade do |t|
+    t.string   "title"
+    t.text     "description"
+    t.integer  "photo_id"
+    t.integer  "photoable_id"
+    t.string   "photoable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "photo_joins", ["photoable_id"], name: "index_photo_joins_on_photoable_id", using: :btree
+  add_index "photo_joins", ["photoable_type"], name: "index_photo_joins_on_photoable_type", using: :btree
+
+  create_table "photos", force: :cascade do |t|
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "user_profiles", force: :cascade do |t|

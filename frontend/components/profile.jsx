@@ -26,11 +26,6 @@ var Profile = React.createClass({
     this.setState({ profile: ProfileStore.profile() });
   },
 
-  // <ProfileSidebar />
-  // <Skills />
-  // <WorkExperience />
-  // <Education />
-  // <About />
   render: function() {
     if (this.state.profile) {
       var firstName = this.state.profile.first_name;
@@ -55,5 +50,4 @@ var Profile = React.createClass({
 
 });
 
-// <ProfilePic avatar={avatar} />
 module.exports = Profile;

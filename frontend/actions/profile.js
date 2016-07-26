@@ -10,6 +10,15 @@ ProfileActions = {
     };
 
     AppDispatcher.dispatch(action);
+  },
+
+  receiveTempProfilePic: function (photo) {
+    var action = {
+      actionType: ProfileConstants.RECEIVE_TEMP_PROFILE_PIC,
+      photo: photo
+    };
+
+    AppDispatcher.dispatch(action);
   }
 
 };

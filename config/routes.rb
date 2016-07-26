@@ -8,5 +8,6 @@ Rails.application.routes.draw do
     end
     resource :session, only: [:show, :create, :destroy]
     resource :user_profile
+    resources :photos
   end
 end

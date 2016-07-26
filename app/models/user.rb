@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_one :profile, class_name: 'UserProfile'
+  include Photoable
   # build_profile not profile.new
 
   attr_reader :password
@@ -18,7 +19,7 @@ class User < ActiveRecord::Base
 	def is_password?(unencrypted_password)
 		BCrypt::Password.new(self.password_digest).is_password?(unencrypted_password)
 	end
-  
+
 	def password=(unencrypted_password)
 		if unencrypted_password.present?
 			@password = unencrypted_password

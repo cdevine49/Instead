@@ -38,6 +38,27 @@ avatar_file_size     | integer   |
 avatar_updated_at    | datetime  |
 user_id              | integer   | not null, indexed, unique
 
+## photo_joins
+
+column name          | data type | details
+-------------------- |-----------|-----------------------
+id                   | integer   | not null, primary key
+title                | string    |
+description          | text      |
+photo_id             | integer   | not null
+imageable_type       | string    | not null
+imageable_id         | integer   | not null
+
+## photos
+
+column name          | data type | details
+-------------------- |-----------|-----------------------
+id                   | integer   | not null, primary key
+image_file_name      | string    |
+image_content_type   | string    |
+image_file_size      | integer   |
+image_updated_at     | datetime  |
+
 
 ## addresses
 

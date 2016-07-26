@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
+var Modal = require('react-modal');
 
 var App = require('./components/app');
 var LogIn = require('./components/logIn');
@@ -17,12 +18,14 @@ var Router = require('react-router').Router;
 var Route = require('react-router').Route;
 var hashHistory = ReactRouter.hashHistory;
 var IndexRoute = ReactRouter.IndexRoute;
+
 document.addEventListener('DOMContentLoaded', function () {
+  Modal.setAppElement(document.body);
   ReactDOM.render(
     <Router history={hashHistory}>
       <Route path='/' component={App} onEnter={_ensureLoggedIn} >
         <IndexRoute component={Home} />
-        <Route path='/:id' component={Profile} />
+        <Route path='/users/:id' component={Profile} />
       </Route>
 
       <Route path='/login' component={LogIn} onEnter={_ensureLoggedOut} />

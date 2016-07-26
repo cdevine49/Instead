@@ -1,15 +1,10 @@
 var React = require('react');
 var LogOut = require('./header/logout');
 var AccountBox = require('./header/accountBox');
-var ProfilePic = require('./header/profilePic');
 var SessionStore = require('../stores/session');
 var Link = require('react-router').Link;
 
 var Header = React.createClass({
-
-  _alert: function () {
-    console.log("test");
-  },
 
   // <ProfilePic onClick={this._alert}/>
   // <AccountBox toggle={true}/>
@@ -18,7 +13,7 @@ var Header = React.createClass({
       <div>
         <h1>Instead</h1>
         <Link to={'/'}>Home</Link>
-        <Link to={'/' + SessionStore.currentUser().id}>Profile</Link>
+        <Link to={'/users/' + SessionStore.currentUser().id}>Profile</Link>
         <Link to={'/jobs/'}>Jobs</Link>
       </div>
     );

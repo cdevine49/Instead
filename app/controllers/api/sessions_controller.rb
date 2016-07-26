@@ -7,7 +7,7 @@ class Api::SessionsController < ApplicationController
       @user = current_user
       render :show
     else
-      render json: { message: "Please login" }, status: 401
+      render json: { message: "Please login" }, status: 404
     end
   end
 
@@ -15,7 +15,6 @@ class Api::SessionsController < ApplicationController
     email = params[:user][:email]
     password = params[:user][:password]
     user = User.find_by_credentials(email, password)
-
     if user && user.is_password?(params[:user][:password])
       login!(user)
       render :show
