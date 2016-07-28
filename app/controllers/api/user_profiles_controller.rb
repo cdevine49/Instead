@@ -14,6 +14,7 @@ class Api::UserProfilesController < ApplicationController
     render :show
   end
 
+  # Right now, this is completely redundant, but it may not stay that way.
   def upload
     @profile = current_user.profile
     if @profile && @profile.update(profile_params)

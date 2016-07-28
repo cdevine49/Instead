@@ -4,6 +4,7 @@ class UserProfile < ActiveRecord::Base
   has_one :avatarX, through: :photo_join, source: :photo
   belongs_to :user
 
+  # hold over code that I don't want to get rid of just yet
   has_attached_file :avatar,
     default_url: "default-avatar.png"
 
