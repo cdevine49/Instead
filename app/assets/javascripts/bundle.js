@@ -35873,10 +35873,9 @@
 	
 	  prepareImage: function (image) {
 	    var img = new Image();
-	    if (image !== this.props.image) {
-	      debugger;
-	      img.crossOrigin = 'anonymous';
-	    }
+	    // if (image !== this.props.image) {
+	    //   img.crossOrigin = 'anonymous';
+	    // }
 	    img.onload = function () {
 	      var scaledImage = this.fitImageToCanvas(img.width, img.height);
 	      scaledImage.resource = img;
@@ -35957,14 +35956,42 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement('canvas', {
-	        ref: 'canvas',
-	        width: this.props.width,
-	        height: this.props.height
-	      }),
-	      React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.handleFile })
+	      React.createElement(
+	        'header',
+	        null,
+	        React.createElement(
+	          'h3',
+	          null,
+	          React.createElement(
+	            'span',
+	            null,
+	            'Edit Photo'
+	          ),
+	          React.createElement(
+	            'span',
+	            null,
+	            'x'
+	          )
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Make sure you\'re looking your best...'
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement('canvas', {
+	          ref: 'canvas',
+	          width: this.props.width,
+	          height: this.props.height
+	        })
+	      ),
+	      React.createElement('div', null)
 	    );
 	  }
+	  // <input type="file" accept="image/*" onChange={this.handleFile} />
 	
 	});
 	

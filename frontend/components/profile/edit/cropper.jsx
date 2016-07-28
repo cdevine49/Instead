@@ -31,10 +31,9 @@ var Cropper = React.createClass({
 
   prepareImage: function(image) {
     var img = new Image();
-    if (image !== this.props.image) {
-      debugger
-      img.crossOrigin = 'anonymous';
-    }
+    // if (image !== this.props.image) {
+    //   img.crossOrigin = 'anonymous';
+    // }
     img.onload = function() {
       var scaledImage = this.fitImageToCanvas(img.width, img.height);
       scaledImage.resource = img;
@@ -114,15 +113,26 @@ var Cropper = React.createClass({
   render: function() {
     return (
       <div>
-        <canvas
-          ref='canvas'
-          width={this.props.width}
-          height={this.props.height}
-          />
-        <input type="file" accept="image/*" onChange={this.handleFile} />
+        <header>
+          <h3>
+            <span>Edit Photo</span>
+            <span>x</span>
+            </h3>
+          <p>Make sure you're looking your best...</p>
+        </header>
+        <div>
+          <canvas
+            ref='canvas'
+            width={this.props.width}
+            height={this.props.height}
+            />
+        </div>
+        <div>
+        </div>
       </div>
     );
   }
+  // <input type="file" accept="image/*" onChange={this.handleFile} />
 
 });
 
