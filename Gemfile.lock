@@ -127,6 +127,7 @@ GEM
     jbuilder (2.5.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
+    jcrop-rails-v2 (0.9.12.3)
     jmespath (1.2.4)
       json_pure (>= 1.8.1)
     jquery-rails (4.1.1)
@@ -307,6 +308,7 @@ DEPENDENCIES
   figaro
   guard-rspec
   jbuilder (~> 2.0)
+  jcrop-rails-v2
   jquery-rails
   launchy
   newrelic_rpm

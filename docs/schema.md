@@ -15,7 +15,6 @@ id              | integer   | not null, primary key
 name            | string    | not null
 industry        | string    |
 about           | text      |
-industry        | string    |
 user_id         | integer   | not null, indexed
 
 
@@ -26,16 +25,7 @@ column name          | data type | details
 id                   | integer   | not null, primary key
 first_name           | string    |
 last_name            | string    |
-birthday             | date      |
-gender               | string    |
-race                 | string    |
-veteran              | string    |
-disability           | string    |
 about                | text      |
-avatar_file_name     | string    |
-avatar_content_type  | string    |
-avatar_file_size     | integer   |
-avatar_updated_at    | datetime  |
 user_id              | integer   | not null, indexed, unique
 
 ## photo_joins
@@ -83,6 +73,10 @@ title            | string    |
 body             | text      |
 user_id          | integer   | not null, indexed
 profile_id       | integer   | not null, indexed
+
+## educations
+
+## work_experiences
 
 
 ## networks

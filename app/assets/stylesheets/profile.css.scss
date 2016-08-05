@@ -4,17 +4,23 @@
   height: 200px;
 }
 
-.profile-pic {
+.profile-pic,
+.default-profile-pic {
   height: 100%;
   width: 100%;
-  // background-size: contain;
+}
+
+.default-profile-pic {
+  background-size: contain;
+  background-image: asset-url("default-avatar.png");
+
 }
 
 .profile-pic2 {
   height: 100px;
   width: 100px;
-
 }
+
 .profile-pic-edit {
   position: absolute;
   width: 100%;

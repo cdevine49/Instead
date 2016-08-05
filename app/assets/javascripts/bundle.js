@@ -35571,14 +35571,14 @@
 	    });
 	  },
 	
-	  updateProfile: function (data) {
+	  updateProfile: function (data, bool) {
 	    return new Promise(function (resolve, reject) {
 	      $.ajax({
 	        type: "PATCH",
 	        url: "/api/user_profile/",
 	        dataType: "json",
-	        processData: false,
-	        contentType: false,
+	        processData: bool,
+	        contentType: bool,
 	        data: data,
 	        success: function (profile) {
 	          ProfileActions.receiveProfile(profile);
@@ -35734,7 +35734,7 @@
 	  },
 	
 	  closeModal: function () {
-	    this.setState({ modalOpen: false });
+	    this.setState({ modalImage: null, modalOpen: false });
 	  },
 	
 	  _drop: function (e) {
@@ -35759,17 +35759,27 @@
 	    ProfileUtil.createTempProfilePic(formData);
 	  },
 	
+	  profilePic: function () {
+	    if (this.props.avatar) {
+	      return React.createElement('img', {
+	        src: this.props.avatar,
+	        className: 'profile-pic'
+	      });
+	    } else {
+	      return React.createElement('div', { className: 'default-profile-pic' });
+	    }
+	  },
+	
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { className: 'profile-pic-wrapper' },
-	      React.createElement('img', {
-	        src: this.props.avatar,
-	        className: 'profile-pic',
+	      {
+	        className: 'profile-pic-wrapper',
 	        onDrop: this._drop,
 	        onDragEnter: this._stop,
 	        onDragOver: this._stop
-	      }),
+	      },
+	      this.profilePic(),
 	      React.createElement(
 	        'p',
 	        { className: 'profile-pic-edit', onClick: this._onClick },
@@ -35862,6 +35872,9 @@
 	  componentDidMount: function () {
 	    var canvas = ReactDOM.findDOMNode(this.refs.canvas);
 	    var context = canvas.getContext('2d');
+	    if (this.props.croppable) {
+	      this.jCrop();
+	    }
 	    this.prepareImage(this.props.image);
 	  },
 	
@@ -35869,6 +35882,32 @@
 	    var context = ReactDOM.findDOMNode(this.refs.canvas).getContext("2d");
 	    context.clearRect(0, 0, this.props.width, this.props.height);
 	    this.addImageToCanvas(context, this.state.image);
+	  },
+	
+	  jCrop: function () {
+	    var that = this;
+	    $('#cropbox').Jcrop({
+	      onChange: that.update_crop,
+	      onSelect: that.update_crop,
+	      setSelect: [0, 0, 270, 270],
+	      aspectRatio: 1
+	    });
+	  },
+	
+	  update_crop: function (coords) {
+	    var rx = 100 / coords.w;
+	    var ry = 100 / coords.h;
+	    // $('#preview').css({
+	    //   width: Math.round(rx * <%= @user.avatar_geometry(:large).width %>) + 'px',
+	    //   height: Math.round(ry * <%= @user.avatar_geometry(:large).height %>) + 'px',
+	    //   marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+	    //   marginTop: '-' + Math.round(ry * coords.y) + 'px'
+	    // });
+	    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
+	    $("#crop_x").val(Math.round(coords.x));
+	    $("#crop_y").val(Math.round(coords.y));
+	    $("#crop_w").val(Math.round(coords.w));
+	    $("#crop_h").val(Math.round(coords.h));
 	  },
 	
 	  prepareImage: function (image) {
@@ -35983,6 +36022,7 @@
 	        'div',
 	        null,
 	        React.createElement('canvas', {
+	          id: 'cropbox',
 	          ref: 'canvas',
 	          width: this.props.width,
 	          height: this.props.height
@@ -36074,9 +36114,9 @@
 	
 	  _handleSubmit: function (e) {
 	    e.preventDefault();
-	    var fields = serialize(this.refs.form.elements);
+	    var fields = $(this.refs.form.elements).serialize();
 	
-	    ProfileUtil.updateProfile(fields).then(this._toggle);
+	    ProfileUtil.updateProfile(fields, true).then(this._toggle);
 	  },
 	
 	  render: function () {
@@ -36100,23 +36140,9 @@
 	      return React.createElement('div', { className: 'edit-button', onClick: this._toggle });
 	    }
 	  }
-	
 	});
 	
 	module.exports = Edit;
-	
-	function serialize(array) {
-	  var inputs = Array.prototype.slice.call(array);
-	  var serialized = [];
-	
-	  inputs.forEach(function (el) {
-	    if (el.tagName === "INPUT" && el.type !== "file") {
-	      serialized.push(el.name + '=' + el.value);
-	    }
-	  });
-	
-	  return serialized.join('&');
-	}
 
 /***/ },
 /* 300 */

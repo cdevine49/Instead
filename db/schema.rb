@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160722184753) do
+ActiveRecord::Schema.define(version: 20160805021015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,12 +22,30 @@ ActiveRecord::Schema.define(version: 20160722184753) do
     t.string   "state"
     t.integer  "zip_code"
     t.string   "country"
+    t.integer  "addressable_id"
+    t.string   "addressable_type"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
-    t.string   "addressable_type"
-    t.integer  "addressable_id"
     t.string   "_type"
   end
+
+  add_index "addresses", ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
+
+  create_table "educations", force: :cascade do |t|
+    t.string   "school",           null: false
+    t.date     "start"
+    t.date     "end"
+    t.string   "degree"
+    t.string   "field"
+    t.string   "grade"
+    t.text     "extracurriculars"
+    t.text     "description"
+    t.integer  "user_profile_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "educations", ["user_profile_id"], name: "index_educations_on_user_profile_id", using: :btree
 
   create_table "photo_joins", force: :cascade do |t|
     t.string   "title"
@@ -52,15 +70,10 @@ ActiveRecord::Schema.define(version: 20160722184753) do
   end
 
   create_table "user_profiles", force: :cascade do |t|
-    t.string   "first_name"
-    t.string   "last_name"
-    t.date     "birthday"
-    t.text     "about"
-    t.integer  "user_id"
-    t.string   "avatar_file_name"
-    t.string   "avatar_content_type"
-    t.integer  "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.string  "first_name"
+    t.string  "last_name"
+    t.text    "about"
+    t.integer "user_id"
   end
 
   add_index "user_profiles", ["user_id"], name: "index_user_profiles_on_user_id", unique: true, using: :btree
@@ -75,5 +88,16 @@ ActiveRecord::Schema.define(version: 20160722184753) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["session_token"], name: "index_users_on_session_token", unique: true, using: :btree
+
+  create_table "work_experiences", force: :cascade do |t|
+    t.string   "company",         null: false
+    t.string   "position",        null: false
+    t.date     "start"
+    t.date     "end"
+    t.text     "description"
+    t.integer  "user_profile_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

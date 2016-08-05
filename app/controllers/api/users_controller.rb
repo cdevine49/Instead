@@ -16,23 +16,13 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    # current use requirement
-    @user = User.find(params[:id])
+    @user = current_user
     if @user.update(user_params)
       render :show
     else
       render json: { message: "User wasn't updated" }, status: 422
     end
   end
-
-  # def index
-  #   @users = User.all
-  # end
-  #
-  # def show
-  #   @user = User.find_by(user_params)
-  #   render :show
-  # end
 
   def destroy
     User.find(params[:id]).destroy

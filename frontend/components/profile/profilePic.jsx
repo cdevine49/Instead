@@ -35,7 +35,7 @@ var ProfilePic = React.createClass({
   },
 
   closeModal: function() {
-    this.setState({ modalOpen: false });
+    this.setState({ modalImage: null, modalOpen: false });
   },
 
   _drop: function(e) {
@@ -62,16 +62,30 @@ var ProfilePic = React.createClass({
     ProfileUtil.createTempProfilePic(formData);
   },
 
-  render: function() {
-    return (
-      <div className="profile-pic-wrapper">
+  profilePic: function() {
+    if (this.props.avatar) {
+      return (
         <img
           src={this.props.avatar}
           className="profile-pic"
-          onDrop={this._drop}
-          onDragEnter={this._stop}
-          onDragOver={this._stop}
-          />
+          />);
+    } else {
+      return (
+        <div className='default-profile-pic'></div>
+      );
+    }
+  },
+
+  render: function() {
+    return (
+      <div
+        className="profile-pic-wrapper"
+        onDrop={this._drop}
+        onDragEnter={this._stop}
+        onDragOver={this._stop}
+        >
+        {this.profilePic()}
+
         <p className="profile-pic-edit" onClick={this._onClick} >
           Edit your <br />profile picture
         </p>

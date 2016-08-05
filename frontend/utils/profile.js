@@ -20,14 +20,14 @@ ProfileUtil = {
     });
   },
 
-  updateProfile: function (data) {
+  updateProfile: function (data, bool) {
     return new Promise( function(resolve, reject) {
       $.ajax({
         type: "PATCH",
         url: "/api/user_profile/",
         dataType: "json",
-        processData: false,
-        contentType: false,
+        processData: bool,
+        contentType: bool,
         data: data,
         success: function (profile) {
           ProfileActions.receiveProfile(profile);

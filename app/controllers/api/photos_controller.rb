@@ -9,6 +9,11 @@ class Api::PhotosController < ApplicationController
     end
   end
 
+  def update
+    @photo = Photo.find(params[:id])
+    render :show
+  end
+
   private
   def photo_params
     params.require(:photo).permit(:image)

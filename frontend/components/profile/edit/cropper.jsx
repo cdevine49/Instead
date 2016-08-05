@@ -20,6 +20,7 @@ var Cropper = React.createClass({
   componentDidMount: function() {
     var canvas = ReactDOM.findDOMNode(this.refs.canvas);
     var context = canvas.getContext('2d');
+    if (this.props.croppable) {this.jCrop();}
     this.prepareImage(this.props.image);
   },
 
@@ -27,6 +28,32 @@ var Cropper = React.createClass({
     var context = ReactDOM.findDOMNode(this.refs.canvas).getContext("2d");
     context.clearRect(0, 0, this.props.width, this.props.height);
     this.addImageToCanvas(context, this.state.image);
+  },
+
+  jCrop: function() {
+    var that = this;
+    $('#cropbox').Jcrop({
+      onChange: that.update_crop,
+      onSelect: that.update_crop,
+      setSelect: [0,0,270,270],
+      aspectRatio: 1
+    });
+  },
+
+  update_crop: function(coords) {
+    var rx = 100/coords.w;
+    var ry = 100/coords.h;
+    // $('#preview').css({
+    //   width: Math.round(rx * <%= @user.avatar_geometry(:large).width %>) + 'px',
+    //   height: Math.round(ry * <%= @user.avatar_geometry(:large).height %>) + 'px',
+    //   marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+    //   marginTop: '-' + Math.round(ry * coords.y) + 'px'
+    // });
+    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
+    $("#crop_x").val(Math.round(coords.x));
+    $("#crop_y").val(Math.round(coords.y));
+    $("#crop_w").val(Math.round(coords.w));
+    $("#crop_h").val(Math.round(coords.h));
   },
 
   prepareImage: function(image) {
@@ -117,11 +144,12 @@ var Cropper = React.createClass({
           <h3>
             <span>Edit Photo</span>
             <span>x</span>
-            </h3>
+          </h3>
           <p>Make sure you're looking your best...</p>
         </header>
         <div>
           <canvas
+            id='cropbox'
             ref='canvas'
             width={this.props.width}
             height={this.props.height}

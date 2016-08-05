@@ -29,9 +29,9 @@ var Edit = React.createClass({
 
   _handleSubmit: function(e) {
     e.preventDefault();
-    var fields = serialize(this.refs.form.elements);
+    var fields = $(this.refs.form.elements).serialize();
 
-    ProfileUtil.updateProfile(fields)
+    ProfileUtil.updateProfile(fields, true)
     .then(this._toggle);
   },
 
@@ -50,20 +50,6 @@ var Edit = React.createClass({
       );
     }
   }
-
 });
 
 module.exports = Edit;
-
-function serialize (array) {
-  var inputs = Array.prototype.slice.call(array);
-  var serialized = [];
-
-  inputs.forEach(function(el) {
-    if (el.tagName === "INPUT" && el.type !== "file") {
-      serialized.push(el.name + '=' + el.value);
-    }
-  });
-
-  return serialized.join('&');
-}
