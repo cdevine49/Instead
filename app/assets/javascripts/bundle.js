@@ -35914,14 +35914,14 @@
 	  },
 	
 	  update_crop: function (coords) {
-	    var rx = 100 / coords.w;
-	    var ry = 100 / coords.h;
-	    // $('#preview').css({
-	    //   width: Math.round(rx * <%= @user.avatar_geometry(:large).width %>) + 'px',
-	    //   height: Math.round(ry * <%= @user.avatar_geometry(:large).height %>) + 'px',
-	    //   marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-	    //   marginTop: '-' + Math.round(ry * coords.y) + 'px'
-	    // });
+	    var rx = 200 / coords.w;
+	    var ry = 200 / coords.h;
+	    $('#preview').css({
+	      width: Math.round(rx * 270) + 'px',
+	      height: Math.round(ry * 270) + 'px',
+	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
+	    });
 	    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
 	    $("#crop_x").val(Math.round(coords.x));
 	    $("#crop_y").val(Math.round(coords.y));
@@ -36047,7 +36047,11 @@
 	        { style: wrapperStyle },
 	        this.display()
 	      ),
-	      React.createElement('div', null)
+	      React.createElement(
+	        'div',
+	        { className: 'new-avatar-preview' },
+	        React.createElement('img', { src: this.props.image, id: 'preview' })
+	      )
 	    );
 	  },
 	

@@ -15,6 +15,12 @@
   background-image: asset-url("default-avatar.png");
 }
 
+.new-avatar-preview {
+  overflow: hidden;
+  height: 200px;
+  width: 200px;
+}
+
 .profile-pic2 {
   height: 100px;
   width: 100px;
