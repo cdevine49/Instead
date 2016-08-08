@@ -18,10 +18,12 @@ var Cropper = React.createClass({
   },
 
   componentDidMount: function() {
-    var canvas = ReactDOM.findDOMNode(this.refs.canvas);
-    var context = canvas.getContext('2d');
-    if (this.props.croppable) {this.jCrop();}
-    this.prepareImage(this.props.image);
+    if (this.props.image) {
+      var canvas = ReactDOM.findDOMNode(this.refs.canvas);
+      var context = canvas.getContext('2d');
+      this.jCrop();
+      this.prepareImage(this.props.image);
+    }
   },
 
   componentDidUpdate: function() {
@@ -138,6 +140,11 @@ var Cropper = React.createClass({
   },
 
   render: function() {
+    var wrapperStyle = {
+      width: this.props.width,
+      height: this.props.height
+    };
+
     return (
       <div>
         <header>
@@ -147,18 +154,30 @@ var Cropper = React.createClass({
           </h3>
           <p>Make sure you're looking your best...</p>
         </header>
-        <div>
-          <canvas
-            id='cropbox'
-            ref='canvas'
-            width={this.props.width}
-            height={this.props.height}
-            />
+        <div style={wrapperStyle}>
+          {this.display()}
         </div>
+
         <div>
         </div>
+
       </div>
     );
+  },
+
+  display: function() {
+    if (this.props.image) {
+      return (<canvas
+        id='cropbox'
+        ref='canvas'
+        width={this.props.width}
+        height={this.props.height}
+        />);
+    } else {
+      return (
+        <div className='default-profile-pic'></div>
+      );
+    }
   }
   // <input type="file" accept="image/*" onChange={this.handleFile} />
 

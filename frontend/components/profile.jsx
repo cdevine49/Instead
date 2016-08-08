@@ -18,7 +18,7 @@ var Profile = React.createClass({
     this.profileStoreToken = ProfileStore.addListener(this._onChange);
   },
 
-  componentWillUnMount: function() {
+  componentWillUnmount: function() {
     this.profileStoreToken.remove();
   },
 

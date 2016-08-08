@@ -1,0 +1,6 @@
+CropperConstants = {
+  RECEIVE_TEMP_PROFILE_PIC: 'RECEIVE_TEMP_PROFILE_PIC',
+  DELETE_TEMP_PROFILE_PIC: 'DELETE_TEMP_PROFILE_PIC'
+};
+
+module.exports = CropperConstants;

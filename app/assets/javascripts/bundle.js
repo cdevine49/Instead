@@ -54,7 +54,7 @@
 	var SignUp = __webpack_require__(280);
 	var Jobs = __webpack_require__(285);
 	var Profile = __webpack_require__(290);
-	var Home = __webpack_require__(301);
+	var Home = __webpack_require__(303);
 	
 	var UserUtil = __webpack_require__(281);
 	var SessionUtil = __webpack_require__(252);
@@ -35490,7 +35490,7 @@
 	var ProfileUtil = __webpack_require__(291);
 	var ProfileStore = __webpack_require__(294);
 	var ProfilePic = __webpack_require__(295);
-	var Item = __webpack_require__(298);
+	var Item = __webpack_require__(300);
 	
 	var Profile = React.createClass({
 	  displayName: 'Profile',
@@ -35507,7 +35507,7 @@
 	    this.profileStoreToken = ProfileStore.addListener(this._onChange);
 	  },
 	
-	  componentWillUnMount: function () {
+	  componentWillUnmount: function () {
 	    this.profileStoreToken.remove();
 	  },
 	
@@ -35589,27 +35589,8 @@
 	        }
 	      });
 	    });
-	  },
-	
-	  createTempProfilePic: function (data) {
-	    return new Promise(function (resolve, reject) {
-	      $.ajax({
-	        type: "POST",
-	        url: "/api/photos",
-	        dataType: "json",
-	        processData: false,
-	        contentType: false,
-	        data: data,
-	        success: function (photo) {
-	          ProfileActions.receiveTempProfilePic(photo);
-	          resolve();
-	        },
-	        error: function (response) {
-	          reject(response);
-	        }
-	      });
-	    });
 	  }
+	
 	};
 	
 	module.exports = ProfileUtil;
@@ -35650,8 +35631,7 @@
 /***/ function(module, exports) {
 
 	ProfileConstants = {
-	  RECEIVE_PROFILE: 'RECEIVE_PROFILE',
-	  RECEIVE_TEMP_PROFILE_PIC: 'RECEIVE_TEMP_PROFILE_PIC'
+	  RECEIVE_PROFILE: 'RECEIVE_PROFILE'
 	};
 	
 	module.exports = ProfileConstants;
@@ -35666,24 +35646,16 @@
 	
 	var ProfileConstants = __webpack_require__(293);
 	
-	var _profile, _newAvatar;
+	var _profile;
 	
 	ProfileStore.profile = function () {
 	  return _profile;
-	};
-	
-	ProfileStore.newAvatar = function () {
-	  return _newAvatar.image;
 	};
 	
 	ProfileStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case ProfileConstants.RECEIVE_PROFILE:
 	      _profile = payload.profile;
-	      ProfileStore.__emitChange();
-	      break;
-	    case ProfileConstants.RECEIVE_TEMP_PROFILE_PIC:
-	      _newAvatar = payload.photo;
 	      ProfileStore.__emitChange();
 	      break;
 	  }
@@ -35699,7 +35671,9 @@
 	var Modal = __webpack_require__(229);
 	var ModalStyle = __webpack_require__(296);
 	var ProfileStore = __webpack_require__(294);
-	var Cropper = __webpack_require__(297);
+	var CropperStore = __webpack_require__(297);
+	var CropperUtil = __webpack_require__(304);
+	var Cropper = __webpack_require__(299);
 	
 	var ProfilePic = React.createClass({
 	  displayName: 'ProfilePic',
@@ -35713,20 +35687,22 @@
 	  },
 	
 	  componentDidMount: function () {
-	    this.profileStoreToken = ProfileStore.addListener(this._tempAvatarChange);
+	    this.cropperStoreToken = CropperStore.addListener(this._tempAvatarChange);
 	  },
 	
 	  componentWillUnMount: function () {
-	    this.profileStoreToken.remove();
+	    this.cropperStoreToken.remove();
 	  },
 	
 	  _tempAvatarChange: function () {
-	    this.openModal(ProfileStore.newAvatar());
+	    if (!this.state.modalOpen) {
+	      this.openModal(CropperStore.newAvatar());
+	    }
 	  },
 	
 	  openModal: function (image) {
-	    this.setState({ modalImage: image, modalOpen: true });
 	    ModalStyle.content.opacity = 0;
+	    this.setState({ modalImage: image, modalOpen: true });
 	  },
 	
 	  onModalOpen: function () {
@@ -35735,6 +35711,7 @@
 	
 	  closeModal: function () {
 	    this.setState({ modalImage: null, modalOpen: false });
+	    // CropperUtil.clearCropperStore();
 	  },
 	
 	  _drop: function (e) {
@@ -35756,7 +35733,7 @@
 	  _tempAvatarUpload: function (file) {
 	    var formData = new FormData();
 	    formData.append("photo[image]", file[0]);
-	    ProfileUtil.createTempProfilePic(formData);
+	    CropperUtil.createTempProfilePic(formData);
 	  },
 	
 	  profilePic: function () {
@@ -35848,6 +35825,48 @@
 /* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Store = __webpack_require__(261).Store;
+	var AppDispatcher = __webpack_require__(254);
+	var CropperStore = new Store(AppDispatcher);
+	
+	var CropperConstants = __webpack_require__(298);
+	
+	var _newAvatar;
+	
+	CropperStore.newAvatar = function () {
+	  return _newAvatar.image;
+	};
+	
+	CropperStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case CropperConstants.RECEIVE_TEMP_PROFILE_PIC:
+	      _newAvatar = payload.photo;
+	      CropperStore.__emitChange();
+	      break;
+	    case CropperConstants.DELETE_TEMP_PROFILE_PIC:
+	      _newAvatar = null;
+	      CropperStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = CropperStore;
+
+/***/ },
+/* 298 */
+/***/ function(module, exports) {
+
+	CropperConstants = {
+	  RECEIVE_TEMP_PROFILE_PIC: 'RECEIVE_TEMP_PROFILE_PIC',
+	  DELETE_TEMP_PROFILE_PIC: 'DELETE_TEMP_PROFILE_PIC'
+	};
+	
+	module.exports = CropperConstants;
+
+/***/ },
+/* 299 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
 	
@@ -35870,12 +35889,12 @@
 	  },
 	
 	  componentDidMount: function () {
-	    var canvas = ReactDOM.findDOMNode(this.refs.canvas);
-	    var context = canvas.getContext('2d');
-	    if (this.props.croppable) {
+	    if (this.props.image) {
+	      var canvas = ReactDOM.findDOMNode(this.refs.canvas);
+	      var context = canvas.getContext('2d');
 	      this.jCrop();
+	      this.prepareImage(this.props.image);
 	    }
-	    this.prepareImage(this.props.image);
 	  },
 	
 	  componentDidUpdate: function () {
@@ -35992,6 +36011,11 @@
 	  },
 	
 	  render: function () {
+	    var wrapperStyle = {
+	      width: this.props.width,
+	      height: this.props.height
+	    };
+	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -36020,16 +36044,24 @@
 	      ),
 	      React.createElement(
 	        'div',
-	        null,
-	        React.createElement('canvas', {
-	          id: 'cropbox',
-	          ref: 'canvas',
-	          width: this.props.width,
-	          height: this.props.height
-	        })
+	        { style: wrapperStyle },
+	        this.display()
 	      ),
 	      React.createElement('div', null)
 	    );
+	  },
+	
+	  display: function () {
+	    if (this.props.image) {
+	      return React.createElement('canvas', {
+	        id: 'cropbox',
+	        ref: 'canvas',
+	        width: this.props.width,
+	        height: this.props.height
+	      });
+	    } else {
+	      return React.createElement('div', { className: 'default-profile-pic' });
+	    }
 	  }
 	  // <input type="file" accept="image/*" onChange={this.handleFile} />
 	
@@ -36038,11 +36070,11 @@
 	module.exports = Cropper;
 
 /***/ },
-/* 298 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Edit = __webpack_require__(299);
+	var Edit = __webpack_require__(301);
 	
 	var ProfileItem = React.createClass({
 	  displayName: 'ProfileItem',
@@ -36078,12 +36110,12 @@
 	module.exports = ProfileItem;
 
 /***/ },
-/* 299 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ProfileUtil = __webpack_require__(291);
-	var EditName = __webpack_require__(300);
+	var EditName = __webpack_require__(302);
 	
 	var Edit = React.createClass({
 	  displayName: 'Edit',
@@ -36145,7 +36177,7 @@
 	module.exports = Edit;
 
 /***/ },
-/* 300 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -36197,7 +36229,7 @@
 	module.exports = EditName;
 
 /***/ },
-/* 301 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -36217,6 +36249,72 @@
 	});
 	
 	module.exports = Home;
+
+/***/ },
+/* 304 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CropperActions = __webpack_require__(305);
+	
+	CropperUtil = {
+	
+	  createTempProfilePic: function (data) {
+	    return new Promise(function (resolve, reject) {
+	      $.ajax({
+	        type: "POST",
+	        url: "/api/photos",
+	        dataType: "json",
+	        processData: false,
+	        contentType: false,
+	        data: data,
+	        success: function (photo) {
+	          CropperActions.receiveTempProfilePic(photo);
+	          resolve();
+	        },
+	        error: function (response) {
+	          reject(response);
+	        }
+	      });
+	    });
+	  },
+	
+	  clearCropperStore: function () {
+	    CropperActions.deleteTempProfilePic();
+	  }
+	
+	};
+	
+	module.exports = CropperUtil;
+
+/***/ },
+/* 305 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(254);
+	var CropperConstants = __webpack_require__(298);
+	
+	CropperActions = {
+	
+	  receiveTempProfilePic: function (photo) {
+	    var action = {
+	      actionType: CropperConstants.RECEIVE_TEMP_PROFILE_PIC,
+	      photo: photo
+	    };
+	
+	    AppDispatcher.dispatch(action);
+	  },
+	
+	  deleteTempProfilePic: function () {
+	    var action = {
+	      actionType: CropperConstants.DELETE_TEMP_PROFILE_PIC
+	    };
+	
+	    AppDispatcher.dispatch(action);
+	  }
+	
+	};
+	
+	module.exports = CropperActions;
 
 /***/ }
 /******/ ]);

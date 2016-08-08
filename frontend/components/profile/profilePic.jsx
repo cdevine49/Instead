@@ -2,6 +2,8 @@ var React = require('react');
 var Modal = require('react-modal');
 var ModalStyle = require('../../styles/modalStyle');
 var ProfileStore = require('../../stores/profile');
+var CropperStore = require('../../stores/cropper');
+var CropperUtil = require('../../utils/cropper');
 var Cropper = require('./edit/cropper');
 
 var ProfilePic = React.createClass({
@@ -14,20 +16,20 @@ var ProfilePic = React.createClass({
   },
 
   componentDidMount: function() {
-    this.profileStoreToken = ProfileStore.addListener(this._tempAvatarChange);
+    this.cropperStoreToken = CropperStore.addListener(this._tempAvatarChange);
   },
 
   componentWillUnMount: function() {
-    this.profileStoreToken.remove();
+    this.cropperStoreToken.remove();
   },
 
   _tempAvatarChange: function() {
-    this.openModal(ProfileStore.newAvatar());
+    if (!this.state.modalOpen) { this.openModal(CropperStore.newAvatar()); }
   },
 
   openModal: function(image) {
-    this.setState({ modalImage: image, modalOpen: true });
     ModalStyle.content.opacity = 0;
+    this.setState({ modalImage: image, modalOpen: true });
   },
 
   onModalOpen: function() {
@@ -36,6 +38,7 @@ var ProfilePic = React.createClass({
 
   closeModal: function() {
     this.setState({ modalImage: null, modalOpen: false });
+    // CropperUtil.clearCropperStore();
   },
 
   _drop: function(e) {
@@ -59,7 +62,7 @@ var ProfilePic = React.createClass({
   _tempAvatarUpload: function(file) {
     var formData = new FormData();
     formData.append("photo[image]", file[0]);
-    ProfileUtil.createTempProfilePic(formData);
+    CropperUtil.createTempProfilePic(formData);
   },
 
   profilePic: function() {
