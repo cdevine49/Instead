@@ -35672,8 +35672,10 @@
 	var ModalStyle = __webpack_require__(296);
 	var ProfileStore = __webpack_require__(294);
 	var CropperStore = __webpack_require__(297);
+	var CropperActions = __webpack_require__(305);
 	var CropperUtil = __webpack_require__(304);
 	var Cropper = __webpack_require__(299);
+	var Cropper2 = __webpack_require__(308);
 	
 	var ProfilePic = React.createClass({
 	  displayName: 'ProfilePic',
@@ -35681,28 +35683,29 @@
 	
 	  getInitialState: function () {
 	    return {
-	      modalOpen: false,
-	      modalImage: null
+	      modalOpen: false
 	    };
 	  },
 	
 	  componentDidMount: function () {
-	    this.cropperStoreToken = CropperStore.addListener(this._tempAvatarChange);
+	    // this.cropperStoreToken = CropperStore.addListener(this.onenModal);
 	  },
 	
 	  componentWillUnMount: function () {
-	    this.cropperStoreToken.remove();
+	    // this.cropperStoreToken.remove();
 	  },
 	
-	  _tempAvatarChange: function () {
-	    if (!this.state.modalOpen) {
-	      this.openModal(CropperStore.newAvatar());
-	    }
-	  },
+	  // _tempAvatarChange: function() {
+	  //   if (this.state.modalOpen) {
+	  //     this.setState({ modalAvatar: CropperStore.newAvatar().image });
+	  //   } else {
+	  //     this.openModal(CropperStore.newAvatar().image);
+	  //   }
+	  // },
 	
-	  openModal: function (image) {
+	  openModal: function () {
 	    ModalStyle.content.opacity = 0;
-	    this.setState({ modalImage: image, modalOpen: true });
+	    this.setState({ modalOpen: true });
 	  },
 	
 	  onModalOpen: function () {
@@ -35710,17 +35713,19 @@
 	  },
 	
 	  closeModal: function () {
-	    this.setState({ modalImage: null, modalOpen: false });
-	    // CropperUtil.clearCropperStore();
+	    this.setState({ modalOpen: false });
 	  },
 	
 	  _drop: function (e) {
 	    this._stop(e);
-	    this._tempAvatarUpload(e.dataTransfer.files);
+	    var file = e.dataTransfer.files[0];
+	    this._tempAvatarUpload(file);
+	    this.openModal();
 	  },
 	
 	  _onClick: function () {
-	    this.openModal(this.props.avatar);
+	    CropperActions.receiveTempAvatarURL(this.props.avatar);
+	    this.openModal();
 	  },
 	
 	  _stop: function (e) {
@@ -35731,9 +35736,17 @@
 	  _handleUpload: function () {},
 	
 	  _tempAvatarUpload: function (file) {
-	    var formData = new FormData();
-	    formData.append("photo[image]", file[0]);
-	    CropperUtil.createTempProfilePic(formData);
+	    var reader = new FileReader();
+	
+	    reader.onloadend = function () {
+	      CropperActions.receiveTempAvatarURL(reader.result);
+	    };
+	
+	    if (file) {
+	      reader.readAsDataURL(file);
+	    } else {
+	      this.resetFile();
+	    }
 	  },
 	
 	  profilePic: function () {
@@ -35777,11 +35790,12 @@
 	          null,
 	          'The Modal'
 	        ),
-	        React.createElement(Cropper, {
-	          image: this.state.modalImage,
+	        React.createElement(Cropper2, {
+	          avatar: CropperStore.URL(),
 	          width: 270,
 	          height: 270,
-	          upload: this._handleUpload
+	          upload: this._handleUpload,
+	          uploadImage: this._tempAvatarUpload
 	        })
 	      )
 	    );
@@ -35831,20 +35845,20 @@
 	
 	var CropperConstants = __webpack_require__(298);
 	
-	var _newAvatar;
+	var _URL;
 	
-	CropperStore.newAvatar = function () {
-	  return _newAvatar.image;
+	CropperStore.URL = function () {
+	  return _URL;
 	};
 	
 	CropperStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
-	    case CropperConstants.RECEIVE_TEMP_PROFILE_PIC:
-	      _newAvatar = payload.photo;
+	    case CropperConstants.RECEIVE_TEMP_AVATAR_URL:
+	      _URL = payload.url;
 	      CropperStore.__emitChange();
 	      break;
 	    case CropperConstants.DELETE_TEMP_PROFILE_PIC:
-	      _newAvatar = null;
+	      _URL = null;
 	      CropperStore.__emitChange();
 	      break;
 	  }
@@ -35857,7 +35871,7 @@
 /***/ function(module, exports) {
 
 	CropperConstants = {
-	  RECEIVE_TEMP_PROFILE_PIC: 'RECEIVE_TEMP_PROFILE_PIC',
+	  RECEIVE_TEMP_AVATAR_URL: 'RECEIVE_TEMP_AVATAR_URL',
 	  DELETE_TEMP_PROFILE_PIC: 'DELETE_TEMP_PROFILE_PIC'
 	};
 	
@@ -35869,6 +35883,8 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
+	var CropperUtil = __webpack_require__(304);
+	var CropperStore = __webpack_require__(297);
 	
 	var Cropper = React.createClass({
 	  displayName: 'Cropper',
@@ -35889,11 +35905,16 @@
 	  },
 	
 	  componentDidMount: function () {
-	    if (this.props.image) {
+	    // this.cropperStoreToken = CropperStore.addListener(this._onChange);
+	    if (this.props.image || CropperStore.newAvatar()) {
 	      var canvas = ReactDOM.findDOMNode(this.refs.canvas);
 	      var context = canvas.getContext('2d');
 	      this.jCrop();
-	      this.prepareImage(this.props.image);
+	      if (CropperStore.newAvatar()) {
+	        this.prepareImage(CropperStore.newAvatar().image);
+	      } else {
+	        this.prepareImage(this.props.image);
+	      }
 	    }
 	  },
 	
@@ -35901,6 +35922,17 @@
 	    var context = ReactDOM.findDOMNode(this.refs.canvas).getContext("2d");
 	    context.clearRect(0, 0, this.props.width, this.props.height);
 	    this.addImageToCanvas(context, this.state.image);
+	  },
+	
+	  componentWillUnmount: function () {
+	    // this.cropperStoreToken.remove();
+	    CropperUtil.clearCropperStore();
+	  },
+	
+	  _onChange: function () {
+	    if (CropperStore.newAvatar()) {
+	      this.prepareImage(CropperStore.newAvatar().image);
+	    }
 	  },
 	
 	  jCrop: function () {
@@ -36010,6 +36042,27 @@
 	    }
 	  },
 	
+	  uploadPhoto: function (e) {
+	    var file = e.currentTarget.files[0];
+	    var reader = new FileReader();
+	
+	    reader.onloadend = function () {
+	      var formData = new FormData();
+	      formData.append("photo[image]", file);
+	      CropperUtil.createTempProfilePic(formData);
+	    }.bind(this);
+	
+	    if (file) {
+	      reader.readAsDataURL(file);
+	    } else {
+	      this.resetFile();
+	    }
+	  },
+	
+	  uploadProfilePic: function () {
+	    CropperUtil.uploadProfilePic(this.preview);
+	  },
+	
 	  render: function () {
 	    var wrapperStyle = {
 	      width: this.props.width,
@@ -36040,7 +36093,8 @@
 	          'p',
 	          null,
 	          'Make sure you\'re looking your best...'
-	        )
+	        ),
+	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadPhoto })
 	      ),
 	      React.createElement(
 	        'div',
@@ -36051,12 +36105,17 @@
 	        'div',
 	        { className: 'new-avatar-preview' },
 	        React.createElement('img', { src: this.props.image, id: 'preview' })
+	      ),
+	      React.createElement(
+	        'button',
+	        { onClick: this.uploadProfilePic },
+	        'Crop'
 	      )
 	    );
 	  },
 	
 	  display: function () {
-	    if (this.props.image) {
+	    if (this.props.image || CropperStore.newAvatar()) {
 	      return React.createElement('canvas', {
 	        id: 'cropbox',
 	        ref: 'canvas',
@@ -36067,7 +36126,6 @@
 	      return React.createElement('div', { className: 'default-profile-pic' });
 	    }
 	  }
-	  // <input type="file" accept="image/*" onChange={this.handleFile} />
 	
 	});
 	
@@ -36282,6 +36340,8 @@
 	    });
 	  },
 	
+	  uploadProfilePic: function (photo) {},
+	
 	  clearCropperStore: function () {
 	    CropperActions.deleteTempProfilePic();
 	  }
@@ -36299,10 +36359,10 @@
 	
 	CropperActions = {
 	
-	  receiveTempProfilePic: function (photo) {
+	  receiveTempAvatarURL: function (url) {
 	    var action = {
-	      actionType: CropperConstants.RECEIVE_TEMP_PROFILE_PIC,
-	      photo: photo
+	      actionType: CropperConstants.RECEIVE_TEMP_AVATAR_URL,
+	      url: url
 	    };
 	
 	    AppDispatcher.dispatch(action);
@@ -36319,6 +36379,178 @@
 	};
 	
 	module.exports = CropperActions;
+
+/***/ },
+/* 306 */,
+/* 307 */,
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(38);
+	var CropperUtil = __webpack_require__(304);
+	var CropperStore = __webpack_require__(297);
+	
+	var Cropper = React.createClass({
+	  displayName: 'Cropper',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      imageURL: CropperStore.URL(),
+	      jcrop: null
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    if (CropperStore.URL()) {
+	      this.jCrop();
+	    }
+	    this.cropperStoreToken = CropperStore.addListener(this._onChange);
+	  },
+	
+	  _onChange: function () {
+	    var url = CropperStore.URL();
+	    this.setState({ imageURL: url });
+	    if (this.state.jcrop) {
+	      $('.jcrop-holder img').attr('src', url);
+	    } else {
+	      this.jCrop();
+	    }
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.cropperStoreToken.remove();
+	    // CropperUtil.clearCropperStore();
+	  },
+	
+	  // componentWillReceiveProps: function(nextProps) {
+	  //   if (this.props !== nextProps) {
+	  //     $('.jcrop-holder img').attr('src', nextProps.avatar);
+	  //   }
+	  // },
+	
+	  jCrop: function () {
+	    var that = this;
+	    $('#cropbox').Jcrop({
+	      onChange: that.update_crop,
+	      onSelect: that.update_crop,
+	      setSelect: [0, 0, 270, 270],
+	      aspectRatio: 1
+	    }, function () {
+	      that.setState({ jcrop: this });
+	    });
+	  },
+	
+	  update_crop: function (coords) {
+	    var rx = 200 / coords.w;
+	    var ry = 200 / coords.h;
+	    $('#preview').css({
+	      width: Math.round(rx * 270) + 'px',
+	      height: Math.round(ry * 270) + 'px',
+	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
+	    });
+	    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
+	    $("#crop_x").val(Math.round(coords.x));
+	    $("#crop_y").val(Math.round(coords.y));
+	    $("#crop_w").val(Math.round(coords.w));
+	    $("#crop_h").val(Math.round(coords.h));
+	  },
+	
+	  uploadImage: function (e) {
+	    var file = e.currentTarget.files[0];
+	    this.props.uploadImage(file);
+	  },
+	
+	  render: function () {
+	    var wrapperStyle = {
+	      width: this.props.width,
+	      height: this.props.height
+	    };
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'header',
+	        null,
+	        React.createElement(
+	          'h3',
+	          null,
+	          React.createElement(
+	            'span',
+	            null,
+	            'Edit Photo'
+	          ),
+	          React.createElement(
+	            'span',
+	            null,
+	            'x'
+	          )
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Make sure you\'re looking your best...'
+	        ),
+	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadImage })
+	      ),
+	      React.createElement(
+	        'div',
+	        { style: wrapperStyle },
+	        this.display()
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'new-avatar-preview' },
+	        React.createElement('img', { src: this.state.imageURL, id: 'preview' })
+	      ),
+	      React.createElement(
+	        'form',
+	        { onSubmit: this.props.upload, ref: 'cropForm' },
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_x',
+	          name: 'crop_x',
+	          defaultValue: '0'
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_y',
+	          name: 'crop_y',
+	          defaultValue: '0'
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_w',
+	          name: 'crop_w',
+	          defaultValue: this.props.width
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_h',
+	          name: 'crop_h',
+	          defaultValue: this.props.height
+	        }),
+	        React.createElement('input', {
+	          type: 'submit',
+	          value: 'Crop' })
+	      )
+	    );
+	  },
+	
+	  display: function () {
+	    if (this.state.imageURL) {
+	      return React.createElement('img', { id: 'cropbox', className: 'profile-pic', src: this.state.imageURL });
+	    } else {
+	      return React.createElement('div', { className: 'default-profile-pic' });
+	    }
+	  }
+	
+	});
+	
+	module.exports = Cropper;
 
 /***/ }
 /******/ ]);

@@ -1,5 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var CropperUtil = require('../../../utils/cropper');
+var CropperStore = require('../../../stores/cropper');
 
 var Cropper = React.createClass({
 
@@ -18,11 +20,16 @@ var Cropper = React.createClass({
   },
 
   componentDidMount: function() {
-    if (this.props.image) {
+    // this.cropperStoreToken = CropperStore.addListener(this._onChange);
+    if (this.props.image || CropperStore.newAvatar()) {
       var canvas = ReactDOM.findDOMNode(this.refs.canvas);
       var context = canvas.getContext('2d');
       this.jCrop();
-      this.prepareImage(this.props.image);
+      if (CropperStore.newAvatar()) {
+        this.prepareImage(CropperStore.newAvatar().image);
+      } else {
+        this.prepareImage(this.props.image);
+      }
     }
   },
 
@@ -30,6 +37,17 @@ var Cropper = React.createClass({
     var context = ReactDOM.findDOMNode(this.refs.canvas).getContext("2d");
     context.clearRect(0, 0, this.props.width, this.props.height);
     this.addImageToCanvas(context, this.state.image);
+  },
+
+  componentWillUnmount: function() {
+    // this.cropperStoreToken.remove();
+    CropperUtil.clearCropperStore();
+  },
+
+  _onChange: function() {
+    if (CropperStore.newAvatar()) {
+      this.prepareImage(CropperStore.newAvatar().image);
+    }
   },
 
   jCrop: function() {
@@ -139,6 +157,27 @@ var Cropper = React.createClass({
     }
   },
 
+  uploadPhoto: function(e) {
+    var file = e.currentTarget.files[0];
+    var reader = new FileReader();
+
+    reader.onloadend = function() {
+      var formData = new FormData();
+      formData.append("photo[image]", file);
+      CropperUtil.createTempProfilePic(formData);
+    }.bind(this);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      this.resetFile();
+    }
+  },
+
+  uploadProfilePic: function() {
+    CropperUtil.uploadProfilePic(this.preview);
+  },
+
   render: function() {
     var wrapperStyle = {
       width: this.props.width,
@@ -153,6 +192,7 @@ var Cropper = React.createClass({
             <span>x</span>
           </h3>
           <p>Make sure you're looking your best...</p>
+          <input type="file" accept="image/*" onChange={this.uploadPhoto} />
         </header>
         <div style={wrapperStyle}>
           {this.display()}
@@ -161,13 +201,13 @@ var Cropper = React.createClass({
         <div className='new-avatar-preview'>
           <img src={this.props.image} id='preview'/>
         </div>
-
+        <button onClick={this.uploadProfilePic}>Crop</button>
       </div>
     );
   },
 
   display: function() {
-    if (this.props.image) {
+    if (this.props.image || CropperStore.newAvatar()) {
       return (<canvas
         id='cropbox'
         ref='canvas'
@@ -180,7 +220,6 @@ var Cropper = React.createClass({
       );
     }
   }
-  // <input type="file" accept="image/*" onChange={this.handleFile} />
 
 });
 

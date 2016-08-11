@@ -3,33 +3,38 @@ var Modal = require('react-modal');
 var ModalStyle = require('../../styles/modalStyle');
 var ProfileStore = require('../../stores/profile');
 var CropperStore = require('../../stores/cropper');
+var CropperActions = require('../../actions/cropper');
 var CropperUtil = require('../../utils/cropper');
 var Cropper = require('./edit/cropper');
+var Cropper2 = require('./edit/cropper2');
 
 var ProfilePic = React.createClass({
 
   getInitialState: function() {
     return {
       modalOpen: false,
-      modalImage: null
     };
   },
 
   componentDidMount: function() {
-    this.cropperStoreToken = CropperStore.addListener(this._tempAvatarChange);
+    // this.cropperStoreToken = CropperStore.addListener(this.onenModal);
   },
 
   componentWillUnMount: function() {
-    this.cropperStoreToken.remove();
+    // this.cropperStoreToken.remove();
   },
 
-  _tempAvatarChange: function() {
-    if (!this.state.modalOpen) { this.openModal(CropperStore.newAvatar()); }
-  },
+  // _tempAvatarChange: function() {
+  //   if (this.state.modalOpen) {
+  //     this.setState({ modalAvatar: CropperStore.newAvatar().image });
+  //   } else {
+  //     this.openModal(CropperStore.newAvatar().image);
+  //   }
+  // },
 
-  openModal: function(image) {
+  openModal: function() {
     ModalStyle.content.opacity = 0;
-    this.setState({ modalImage: image, modalOpen: true });
+    this.setState({ modalOpen: true });
   },
 
   onModalOpen: function() {
@@ -37,17 +42,19 @@ var ProfilePic = React.createClass({
   },
 
   closeModal: function() {
-    this.setState({ modalImage: null, modalOpen: false });
-    // CropperUtil.clearCropperStore();
+    this.setState({ modalOpen: false });
   },
 
   _drop: function(e) {
     this._stop(e);
-    this._tempAvatarUpload(e.dataTransfer.files);
+    var file = e.dataTransfer.files[0];
+    this._tempAvatarUpload(file);
+    this.openModal();
   },
 
   _onClick: function() {
-    this.openModal(this.props.avatar);
+    CropperActions.receiveTempAvatarURL(this.props.avatar);
+    this.openModal();
   },
 
   _stop: function(e) {
@@ -60,9 +67,17 @@ var ProfilePic = React.createClass({
   },
 
   _tempAvatarUpload: function(file) {
-    var formData = new FormData();
-    formData.append("photo[image]", file[0]);
-    CropperUtil.createTempProfilePic(formData);
+    var reader = new FileReader();
+
+    reader.onloadend = function() {
+      CropperActions.receiveTempAvatarURL(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      this.resetFile();
+    }
   },
 
   profilePic: function() {
@@ -100,11 +115,12 @@ var ProfilePic = React.createClass({
           onAfterOpen={this.onModalOpen}
         >
           <h2>The Modal</h2>
-            <Cropper
-              image={this.state.modalImage}
+            <Cropper2
+              avatar={CropperStore.URL()}
               width={270}
               height={270}
               upload={this._handleUpload}
+              uploadImage={this._tempAvatarUpload}
               />
         </Modal>
       </div>

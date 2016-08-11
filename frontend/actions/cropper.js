@@ -3,10 +3,10 @@ var CropperConstants = require('../constants/cropper');
 
 CropperActions = {
 
-  receiveTempProfilePic: function (photo) {
+  receiveTempAvatarURL: function (url) {
     var action = {
-      actionType: CropperConstants.RECEIVE_TEMP_PROFILE_PIC,
-      photo: photo
+      actionType: CropperConstants.RECEIVE_TEMP_AVATAR_URL,
+      url: url
     };
 
     AppDispatcher.dispatch(action);

@@ -22,6 +22,10 @@ CropperUtil = {
     });
   },
 
+  uploadProfilePic: function(photo) {
+
+  },
+
   clearCropperStore: function() {
     CropperActions.deleteTempProfilePic();
   }

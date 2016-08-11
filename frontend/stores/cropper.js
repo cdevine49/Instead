@@ -4,20 +4,20 @@ var CropperStore = new Store(AppDispatcher);
 
 var CropperConstants = require('../constants/cropper');
 
-var _newAvatar;
+var _URL;
 
-CropperStore.newAvatar = function() {
-  return _newAvatar.image;
+CropperStore.URL = function() {
+  return _URL;
 };
 
 CropperStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
-    case CropperConstants.RECEIVE_TEMP_PROFILE_PIC:
-      _newAvatar = payload.photo;
+    case CropperConstants.RECEIVE_TEMP_AVATAR_URL:
+      _URL = payload.url;
       CropperStore.__emitChange();
       break;
     case CropperConstants.DELETE_TEMP_PROFILE_PIC:
-      _newAvatar = null;
+      _URL = null;
       CropperStore.__emitChange();
       break;
   }
