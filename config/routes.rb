@@ -8,6 +8,8 @@ Rails.application.routes.draw do
     end
     resource :session, only: [:show, :create, :destroy]
     resource :user_profile
-    resources :photos
+    resources :photos do
+      post 'upload_avatar', on: :collection
+    end
   end
 end

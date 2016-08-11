@@ -1,12 +1,13 @@
 var React = require('react');
 var Modal = require('react-modal');
 var ModalStyle = require('../../styles/modalStyle');
+
 var ProfileStore = require('../../stores/profile');
-var CropperStore = require('../../stores/cropper');
+
 var CropperActions = require('../../actions/cropper');
-var CropperUtil = require('../../utils/cropper');
 var Cropper = require('./edit/cropper');
-var Cropper2 = require('./edit/cropper2');
+
+var PhotoUtil = require('../../utils/photo');
 
 var ProfilePic = React.createClass({
 
@@ -15,22 +16,6 @@ var ProfilePic = React.createClass({
       modalOpen: false,
     };
   },
-
-  componentDidMount: function() {
-    // this.cropperStoreToken = CropperStore.addListener(this.onenModal);
-  },
-
-  componentWillUnMount: function() {
-    // this.cropperStoreToken.remove();
-  },
-
-  // _tempAvatarChange: function() {
-  //   if (this.state.modalOpen) {
-  //     this.setState({ modalAvatar: CropperStore.newAvatar().image });
-  //   } else {
-  //     this.openModal(CropperStore.newAvatar().image);
-  //   }
-  // },
 
   openModal: function() {
     ModalStyle.content.opacity = 0;
@@ -62,8 +47,10 @@ var ProfilePic = React.createClass({
     e.preventDefault();
   },
 
-  _handleUpload: function() {
-
+  _handleUpload: function(url, cropData) {
+    var data = $.extend({url: url}, cropData);
+    var params = { photo: data };
+    PhotoUtil.uploadAvatar(params);
   },
 
   _tempAvatarUpload: function(file) {
@@ -115,11 +102,10 @@ var ProfilePic = React.createClass({
           onAfterOpen={this.onModalOpen}
         >
           <h2>The Modal</h2>
-            <Cropper2
-              avatar={CropperStore.URL()}
+            <Cropper
               width={270}
               height={270}
-              upload={this._handleUpload}
+              crop={this._handleUpload}
               uploadImage={this._tempAvatarUpload}
               />
         </Modal>

@@ -31,6 +31,10 @@ gem 'aws-sdk', '>= 2.0'
 gem 'cloudinary'
 gem 'attachinary'
 
+gem 'mini_magick'
+gem 'cocaine'
+gem 'rmagick'
+
 gem 'bcrypt', require: 'bcrypt'
 
 # Use ActiveModel has_secure_password

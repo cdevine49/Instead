@@ -35670,12 +35670,13 @@
 	var React = __webpack_require__(1);
 	var Modal = __webpack_require__(229);
 	var ModalStyle = __webpack_require__(296);
+	
 	var ProfileStore = __webpack_require__(294);
-	var CropperStore = __webpack_require__(297);
+	
 	var CropperActions = __webpack_require__(305);
-	var CropperUtil = __webpack_require__(304);
 	var Cropper = __webpack_require__(299);
-	var Cropper2 = __webpack_require__(308);
+	
+	var PhotoUtil = __webpack_require__(309);
 	
 	var ProfilePic = React.createClass({
 	  displayName: 'ProfilePic',
@@ -35686,22 +35687,6 @@
 	      modalOpen: false
 	    };
 	  },
-	
-	  componentDidMount: function () {
-	    // this.cropperStoreToken = CropperStore.addListener(this.onenModal);
-	  },
-	
-	  componentWillUnMount: function () {
-	    // this.cropperStoreToken.remove();
-	  },
-	
-	  // _tempAvatarChange: function() {
-	  //   if (this.state.modalOpen) {
-	  //     this.setState({ modalAvatar: CropperStore.newAvatar().image });
-	  //   } else {
-	  //     this.openModal(CropperStore.newAvatar().image);
-	  //   }
-	  // },
 	
 	  openModal: function () {
 	    ModalStyle.content.opacity = 0;
@@ -35733,7 +35718,11 @@
 	    e.preventDefault();
 	  },
 	
-	  _handleUpload: function () {},
+	  _handleUpload: function (url, cropData) {
+	    var data = $.extend({ url: url }, cropData);
+	    var params = { photo: data };
+	    PhotoUtil.uploadAvatar(params);
+	  },
 	
 	  _tempAvatarUpload: function (file) {
 	    var reader = new FileReader();
@@ -35790,11 +35779,10 @@
 	          null,
 	          'The Modal'
 	        ),
-	        React.createElement(Cropper2, {
-	          avatar: CropperStore.URL(),
+	        React.createElement(Cropper, {
 	          width: 270,
 	          height: 270,
-	          upload: this._handleUpload,
+	          crop: this._handleUpload,
 	          uploadImage: this._tempAvatarUpload
 	        })
 	      )
@@ -35892,47 +35880,30 @@
 	
 	  getInitialState: function () {
 	    return {
-	      imageURL: null,
-	      imageFile: null,
-	      dragging: false,
-	      image: {},
-	      mouse: {
-	        x: null,
-	        y: null
-	      },
-	      preview: null
+	      imageURL: CropperStore.URL(),
+	      jcrop: null
 	    };
 	  },
 	
 	  componentDidMount: function () {
-	    // this.cropperStoreToken = CropperStore.addListener(this._onChange);
-	    if (this.props.image || CropperStore.newAvatar()) {
-	      var canvas = ReactDOM.findDOMNode(this.refs.canvas);
-	      var context = canvas.getContext('2d');
+	    if (CropperStore.URL()) {
 	      this.jCrop();
-	      if (CropperStore.newAvatar()) {
-	        this.prepareImage(CropperStore.newAvatar().image);
-	      } else {
-	        this.prepareImage(this.props.image);
-	      }
 	    }
-	  },
-	
-	  componentDidUpdate: function () {
-	    var context = ReactDOM.findDOMNode(this.refs.canvas).getContext("2d");
-	    context.clearRect(0, 0, this.props.width, this.props.height);
-	    this.addImageToCanvas(context, this.state.image);
-	  },
-	
-	  componentWillUnmount: function () {
-	    // this.cropperStoreToken.remove();
-	    CropperUtil.clearCropperStore();
+	    this.cropperStoreToken = CropperStore.addListener(this._onChange);
 	  },
 	
 	  _onChange: function () {
-	    if (CropperStore.newAvatar()) {
-	      this.prepareImage(CropperStore.newAvatar().image);
+	    var url = CropperStore.URL();
+	    this.setState({ imageURL: url });
+	    if (this.state.jcrop) {
+	      $('.jcrop-holder img').attr('src', url);
+	    } else {
+	      this.jCrop();
 	    }
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.cropperStoreToken.remove();
 	  },
 	
 	  jCrop: function () {
@@ -35942,125 +35913,41 @@
 	      onSelect: that.update_crop,
 	      setSelect: [0, 0, 270, 270],
 	      aspectRatio: 1
+	    }, function () {
+	      that.setState({ jcrop: this });
 	    });
 	  },
 	
 	  update_crop: function (coords) {
+	    // replace 200 with a preview width && / || height prop
 	    var rx = 200 / coords.w;
 	    var ry = 200 / coords.h;
 	    $('#preview').css({
-	      width: Math.round(rx * 270) + 'px',
-	      height: Math.round(ry * 270) + 'px',
+	      width: Math.round(rx * this.props.width) + 'px',
+	      height: Math.round(ry * this.props.height) + 'px',
 	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
 	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
 	    });
-	    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
-	    $("#crop_x").val(Math.round(coords.x));
-	    $("#crop_y").val(Math.round(coords.y));
-	    $("#crop_w").val(Math.round(coords.w));
-	    $("#crop_h").val(Math.round(coords.h));
+	    var ratio = $('#cropbox')[0].naturalWidth / this.props.width;
+	    $("#crop_x").val(Math.round(coords.x * ratio));
+	    $("#crop_y").val(Math.round(coords.y * ratio));
+	    $("#crop_w").val(Math.round(coords.w * ratio));
+	    $("#crop_h").val(Math.round(coords.h * ratio));
 	  },
 	
-	  prepareImage: function (image) {
-	    var img = new Image();
-	    // if (image !== this.props.image) {
-	    //   img.crossOrigin = 'anonymous';
-	    // }
-	    img.onload = function () {
-	      var scaledImage = this.fitImageToCanvas(img.width, img.height);
-	      scaledImage.resource = img;
-	      scaledImage.x = 0;
-	      scaledImage.y = 0;
-	      this.setState({ dragging: false, image: scaledImage, preview: this.toDataURL() });
-	    }.bind(this);
-	    img.src = image;
+	  uploadImage: function (e) {
+	    var file = e.currentTarget.files[0];
+	    this.props.uploadImage(file);
 	  },
 	
-	  fitImageToCanvas: function (width, height) {
-	    var scaledHeight, scaledWidth;
-	
-	    var canvasAspectRatio = this.props.height / this.props.width;
-	    var imageAspectRatio = height / width;
-	
-	    if (canvasAspectRatio > imageAspectRatio) {
-	      scaledHeight = this.props.height;
-	      scaledWidth = scaledHeight * width / height;
-	    } else {
-	      scaledWidth = this.props.width;
-	      scaledHeight = scaledWidth * height / width;
-	    }
-	
-	    return { width: scaledWidth, height: scaledHeight };
-	  },
-	
-	  toDataURL: function () {
-	    var canvas = document.createElement("canvas");
-	    var context = canvas.getContext("2d");
-	
-	    canvas.width = this.props.width;
-	    canvas.height = this.props.height;
-	    this.addImageToCanvas(context, {
-	      resource: this.state.image.resource,
-	      x: this.state.image.x,
-	      y: this.state.image.y,
-	      height: this.state.image.height,
-	      width: this.state.image.width
+	  handleCrop: function (e) {
+	    e.preventDefault();
+	    var cropData = {};
+	    var cropArray = $(this.refs.cropForm.elements).serializeArray();
+	    cropArray.forEach(function (dim) {
+	      cropData[dim.name] = dim.value;
 	    });
-	
-	    return canvas.toDataURL();
-	  },
-	
-	  addImageToCanvas: function (context, image) {
-	    if (!image.resource) return;
-	    context.save();
-	    context.globalCompositeOperation = "destination-over";
-	    var scaledWidth = this.state.image.width;
-	    var scaledHeight = this.state.image.height;
-	
-	    // need to make sure we aren't going out of bounds here...
-	    var x = Math.min(image.x, 0);
-	    var y = Math.min(image.y, 0);
-	    y = scaledHeight + y >= this.props.height ? y : y + (this.props.height - (scaledHeight + y));
-	    x = scaledWidth + x >= this.props.width ? x : x + (this.props.width - (scaledWidth + x));
-	
-	    context.drawImage(image.resource, x, y, image.width, image.height);
-	    context.restore();
-	  },
-	
-	  handleFile: function (e) {
-	    var file = e.currentTarget.files[0];
-	    var reader = new FileReader();
-	
-	    reader.onloadend = function () {
-	      this.prepareImage(reader.result);
-	    }.bind(this);
-	
-	    if (file) {
-	      reader.readAsDataURL(file);
-	    } else {
-	      this.resetFile();
-	    }
-	  },
-	
-	  uploadPhoto: function (e) {
-	    var file = e.currentTarget.files[0];
-	    var reader = new FileReader();
-	
-	    reader.onloadend = function () {
-	      var formData = new FormData();
-	      formData.append("photo[image]", file);
-	      CropperUtil.createTempProfilePic(formData);
-	    }.bind(this);
-	
-	    if (file) {
-	      reader.readAsDataURL(file);
-	    } else {
-	      this.resetFile();
-	    }
-	  },
-	
-	  uploadProfilePic: function () {
-	    CropperUtil.uploadProfilePic(this.preview);
+	    this.props.crop(this.state.imageURL, cropData);
 	  },
 	
 	  render: function () {
@@ -36094,7 +35981,7 @@
 	          null,
 	          'Make sure you\'re looking your best...'
 	        ),
-	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadPhoto })
+	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadImage })
 	      ),
 	      React.createElement(
 	        'div',
@@ -36104,24 +35991,45 @@
 	      React.createElement(
 	        'div',
 	        { className: 'new-avatar-preview' },
-	        React.createElement('img', { src: this.props.image, id: 'preview' })
+	        React.createElement('img', { src: this.state.imageURL, id: 'preview' })
 	      ),
 	      React.createElement(
-	        'button',
-	        { onClick: this.uploadProfilePic },
-	        'Crop'
+	        'form',
+	        { onSubmit: this.handleCrop, ref: 'cropForm' },
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_x',
+	          name: 'crop_x',
+	          defaultValue: '0'
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_y',
+	          name: 'crop_y',
+	          defaultValue: '0'
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_w',
+	          name: 'crop_w',
+	          defaultValue: this.props.width
+	        }),
+	        React.createElement('input', {
+	          type: 'number',
+	          id: 'crop_h',
+	          name: 'crop_h',
+	          defaultValue: this.props.height
+	        }),
+	        React.createElement('input', {
+	          type: 'submit',
+	          value: 'Crop' })
 	      )
 	    );
 	  },
 	
 	  display: function () {
-	    if (this.props.image || CropperStore.newAvatar()) {
-	      return React.createElement('canvas', {
-	        id: 'cropbox',
-	        ref: 'canvas',
-	        width: this.props.width,
-	        height: this.props.height
-	      });
+	    if (this.state.imageURL) {
+	      return React.createElement('img', { id: 'cropbox', className: 'profile-pic', src: this.state.imageURL });
 	    } else {
 	      return React.createElement('div', { className: 'default-profile-pic' });
 	    }
@@ -36383,174 +36291,53 @@
 /***/ },
 /* 306 */,
 /* 307 */,
-/* 308 */
+/* 308 */,
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(38);
-	var CropperUtil = __webpack_require__(304);
-	var CropperStore = __webpack_require__(297);
+	var PhotoActions = __webpack_require__(292);
 	
-	var Cropper = React.createClass({
-	  displayName: 'Cropper',
+	PhotoUtil = {
 	
-	
-	  getInitialState: function () {
-	    return {
-	      imageURL: CropperStore.URL(),
-	      jcrop: null
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    if (CropperStore.URL()) {
-	      this.jCrop();
-	    }
-	    this.cropperStoreToken = CropperStore.addListener(this._onChange);
-	  },
-	
-	  _onChange: function () {
-	    var url = CropperStore.URL();
-	    this.setState({ imageURL: url });
-	    if (this.state.jcrop) {
-	      $('.jcrop-holder img').attr('src', url);
-	    } else {
-	      this.jCrop();
-	    }
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.cropperStoreToken.remove();
-	    // CropperUtil.clearCropperStore();
-	  },
-	
-	  // componentWillReceiveProps: function(nextProps) {
-	  //   if (this.props !== nextProps) {
-	  //     $('.jcrop-holder img').attr('src', nextProps.avatar);
-	  //   }
-	  // },
-	
-	  jCrop: function () {
-	    var that = this;
-	    $('#cropbox').Jcrop({
-	      onChange: that.update_crop,
-	      onSelect: that.update_crop,
-	      setSelect: [0, 0, 270, 270],
-	      aspectRatio: 1
-	    }, function () {
-	      that.setState({ jcrop: this });
+	  fetchPhoto: function (id) {
+	    return new Promise(function (resolve, reject) {
+	      $.ajax({
+	        type: "GET",
+	        url: "/api/photo/" + id,
+	        dataType: "json",
+	        success: function (photo) {
+	          PhotoActions.receivePhoto(photo);
+	          resolve();
+	        },
+	        error: function (response) {
+	          reject(response);
+	        }
+	      });
 	    });
 	  },
 	
-	  update_crop: function (coords) {
-	    var rx = 200 / coords.w;
-	    var ry = 200 / coords.h;
-	    $('#preview').css({
-	      width: Math.round(rx * 270) + 'px',
-	      height: Math.round(ry * 270) + 'px',
-	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
-	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
+	  uploadAvatar: function (params) {
+	    return new Promise(function (resolve, reject) {
+	      $.ajax({
+	        type: "POST",
+	        url: "api/photos/upload_avatar",
+	        dataType: "json",
+	        data: params,
+	        success: function (photo) {
+	          console.log("success");
+	          resolve(response);
+	        },
+	        error: function (response) {
+	          console.log("error");
+	          reject(response);
+	        }
+	      });
 	    });
-	    // var ratio = this.props.image.avatar_geometry(:original).width / this.props.image.avatar_geometry(:large).width;
-	    $("#crop_x").val(Math.round(coords.x));
-	    $("#crop_y").val(Math.round(coords.y));
-	    $("#crop_w").val(Math.round(coords.w));
-	    $("#crop_h").val(Math.round(coords.h));
-	  },
-	
-	  uploadImage: function (e) {
-	    var file = e.currentTarget.files[0];
-	    this.props.uploadImage(file);
-	  },
-	
-	  render: function () {
-	    var wrapperStyle = {
-	      width: this.props.width,
-	      height: this.props.height
-	    };
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'header',
-	        null,
-	        React.createElement(
-	          'h3',
-	          null,
-	          React.createElement(
-	            'span',
-	            null,
-	            'Edit Photo'
-	          ),
-	          React.createElement(
-	            'span',
-	            null,
-	            'x'
-	          )
-	        ),
-	        React.createElement(
-	          'p',
-	          null,
-	          'Make sure you\'re looking your best...'
-	        ),
-	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadImage })
-	      ),
-	      React.createElement(
-	        'div',
-	        { style: wrapperStyle },
-	        this.display()
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'new-avatar-preview' },
-	        React.createElement('img', { src: this.state.imageURL, id: 'preview' })
-	      ),
-	      React.createElement(
-	        'form',
-	        { onSubmit: this.props.upload, ref: 'cropForm' },
-	        React.createElement('input', {
-	          type: 'number',
-	          id: 'crop_x',
-	          name: 'crop_x',
-	          defaultValue: '0'
-	        }),
-	        React.createElement('input', {
-	          type: 'number',
-	          id: 'crop_y',
-	          name: 'crop_y',
-	          defaultValue: '0'
-	        }),
-	        React.createElement('input', {
-	          type: 'number',
-	          id: 'crop_w',
-	          name: 'crop_w',
-	          defaultValue: this.props.width
-	        }),
-	        React.createElement('input', {
-	          type: 'number',
-	          id: 'crop_h',
-	          name: 'crop_h',
-	          defaultValue: this.props.height
-	        }),
-	        React.createElement('input', {
-	          type: 'submit',
-	          value: 'Crop' })
-	      )
-	    );
-	  },
-	
-	  display: function () {
-	    if (this.state.imageURL) {
-	      return React.createElement('img', { id: 'cropbox', className: 'profile-pic', src: this.state.imageURL });
-	    } else {
-	      return React.createElement('div', { className: 'default-profile-pic' });
-	    }
 	  }
 	
-	});
+	};
 	
-	module.exports = Cropper;
+	module.exports = PhotoUtil;
 
 /***/ }
 /******/ ]);
