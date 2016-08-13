@@ -13,12 +13,13 @@ module.exports = {
     left            : '250px',
     right           : '250px',
     bottom          : '100px',
+    width           : '700px',
     backgroundColor : '#eee',
-    border          : '0',
+    border          : '0px',
     background      : '#fff',
-    borderRadius    : '0',
+    borderRadius    : '0px',
     outline         : 'none',
-    padding         : '0',
+    padding         : '0px',
     opacity         : '0',
     transition      : 'opacity 1s'
   }

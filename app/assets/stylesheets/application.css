@@ -72,11 +72,3 @@ button, article, footer, small {
 .hidden {
   display: none
 }
-
-.flex-left {
-  align-self: flex-start;
-}
-
-.flex-right {
-  align-self: flex-end;
-}

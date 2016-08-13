@@ -45,7 +45,6 @@ var Cropper = React.createClass({
       marginLeft: '-' + Math.round(rx * coords.x) + 'px',
       marginTop: '-' + Math.round(ry * coords.y) + 'px'
     });
-
     var ratio = $('#cropbox')[0].naturalWidth / this.props.width;
     $("#crop_x").val(Math.round(coords.x * ratio));
     $("#crop_y").val(Math.round(coords.y * ratio));
@@ -76,7 +75,7 @@ var Cropper = React.createClass({
     };
 
     return (
-      <div>
+      <div className='cropper'>
         <header className='cropper-header'>
           <div>
             <span className='cropper-title'>Edit Photo</span>
@@ -85,23 +84,37 @@ var Cropper = React.createClass({
           <h3 className='cropper-message'>Make sure you're looking your best...</h3>
         </header>
 
-        <div className='cropper-cropbox'>
-          <h4>Adjust Photo</h4>
-          <p>
-            Drag the {this.props.cropSquareColor} rectangle to change position and size. &nbsp;
-            <label for='file-upload' class='cropper-file-upload'>Change Photo.
-              <input
-                type="file"
-                id='file-upload'
-                accept="image/*"
-                onChange={this.uploadImage} />
-            </label>
-          </p>
-          {this.display()}
-        </div>
+        <div className='cropper-uploader'>
+          <div className='flex-left'>
+            <div className='cropper-instructions'>
+              <h4>Adjust Photo</h4>
+              <p>
+                Drag the {this.props.cropSquareColor} rectangle to change position and size. &nbsp;
+                <label for='file-upload' class='cropper-file-upload'>Change Photo.
+                  <input
+                    type="file"
+                    id='file-upload'
+                    accept="image/*"
+                    onChange={this.uploadImage} />
+                </label>
+              </p>
+            </div>
 
-        <div className='new-avatar-preview'>
-          <img src={this.props.imageURL} id='preview'/>
+            <div className='cropper-container' style={wrapperStyle}>
+              {this.display()}
+            </div>
+          </div>
+
+          <div className='flex-right'>
+            <div className='cropper-instructions'>
+              <h4>Preview</h4>
+              <p>How you appear across Instead</p>
+            </div>
+
+            <div className='new-avatar-preview'>
+              <img src={this.props.imageURL} id='preview'/>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={this.handleCrop} ref='cropForm'>
@@ -151,16 +164,16 @@ var Cropper = React.createClass({
   },
 
   display: function() {
-    var cropboxStyle = {
-      width: this.props.width,
-      height: this.props.height
-    };
     if (this.props.imageURL) {
       return (
-        <img id='cropbox' style={cropboxStyle} src={this.props.imageURL}/>);
+        <img
+          id='cropbox'
+          className='cropper-image'
+          src={this.props.imageURL}
+          />);
     } else {
       return (
-        <div className='cropper-default-pic' style={cropboxStyle}></div>
+        <div className='cropper-default-pic cropper-image'></div>
       );
     }
   },

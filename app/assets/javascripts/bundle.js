@@ -35684,7 +35684,7 @@
 	
 	  getInitialState: function () {
 	    return {
-	      modalOpen: false,
+	      modalOpen: true,
 	      cropperURL: this.props.avatar || null
 	    };
 	  },
@@ -35807,12 +35807,13 @@
 	    left: '250px',
 	    right: '250px',
 	    bottom: '100px',
+	    width: '700px',
 	    backgroundColor: '#eee',
-	    border: '0',
+	    border: '0px',
 	    background: '#fff',
-	    borderRadius: '0',
+	    borderRadius: '0px',
 	    outline: 'none',
-	    padding: '0',
+	    padding: '0px',
 	    opacity: '0',
 	    transition: 'opacity 1s'
 	  }
@@ -35913,7 +35914,6 @@
 	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
 	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
 	    });
-	
 	    var ratio = $('#cropbox')[0].naturalWidth / this.props.width;
 	    $("#crop_x").val(Math.round(coords.x * ratio));
 	    $("#crop_y").val(Math.round(coords.y * ratio));
@@ -35945,7 +35945,7 @@
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'cropper' },
 	      React.createElement(
 	        'header',
 	        { className: 'cropper-header' },
@@ -35971,35 +35971,65 @@
 	      ),
 	      React.createElement(
 	        'div',
-	        { className: 'cropper-cropbox' },
+	        { className: 'cropper-uploader' },
 	        React.createElement(
-	          'h4',
-	          null,
-	          'Adjust Photo'
-	        ),
-	        React.createElement(
-	          'p',
-	          null,
-	          'Drag the ',
-	          this.props.cropSquareColor,
-	          ' rectangle to change position and size.  ',
+	          'div',
+	          { className: 'flex-left' },
 	          React.createElement(
-	            'label',
-	            { 'for': 'file-upload', 'class': 'cropper-file-upload' },
-	            'Change Photo.',
-	            React.createElement('input', {
-	              type: 'file',
-	              id: 'file-upload',
-	              accept: 'image/*',
-	              onChange: this.uploadImage })
+	            'div',
+	            { className: 'cropper-instructions' },
+	            React.createElement(
+	              'h4',
+	              null,
+	              'Adjust Photo'
+	            ),
+	            React.createElement(
+	              'p',
+	              null,
+	              'Drag the ',
+	              this.props.cropSquareColor,
+	              ' rectangle to change position and size.  ',
+	              React.createElement(
+	                'label',
+	                { 'for': 'file-upload', 'class': 'cropper-file-upload' },
+	                'Change Photo.',
+	                React.createElement('input', {
+	                  type: 'file',
+	                  id: 'file-upload',
+	                  accept: 'image/*',
+	                  onChange: this.uploadImage })
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'cropper-container', style: wrapperStyle },
+	            this.display()
 	          )
 	        ),
-	        this.display()
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'new-avatar-preview' },
-	        React.createElement('img', { src: this.props.imageURL, id: 'preview' })
+	        React.createElement(
+	          'div',
+	          { className: 'flex-right' },
+	          React.createElement(
+	            'div',
+	            { className: 'cropper-instructions' },
+	            React.createElement(
+	              'h4',
+	              null,
+	              'Preview'
+	            ),
+	            React.createElement(
+	              'p',
+	              null,
+	              'How you appear across Instead'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'new-avatar-preview' },
+	            React.createElement('img', { src: this.props.imageURL, id: 'preview' })
+	          )
+	        )
 	      ),
 	      React.createElement(
 	        'form',
@@ -36044,14 +36074,14 @@
 	  },
 	
 	  display: function () {
-	    var cropboxStyle = {
-	      width: this.props.width,
-	      height: this.props.height
-	    };
 	    if (this.props.imageURL) {
-	      return React.createElement('img', { id: 'cropbox', style: cropboxStyle, src: this.props.imageURL });
+	      return React.createElement('img', {
+	        id: 'cropbox',
+	        className: 'cropper-image',
+	        src: this.props.imageURL
+	      });
 	    } else {
-	      return React.createElement('div', { className: 'cropper-default-pic', style: cropboxStyle });
+	      return React.createElement('div', { className: 'cropper-default-pic cropper-image' });
 	    }
 	  }
 	

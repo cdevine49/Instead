@@ -13,7 +13,7 @@ var ProfilePic = React.createClass({
 
   getInitialState: function() {
     return {
-      modalOpen: false,
+      modalOpen: true,
       cropperURL: this.props.avatar || null
     };
   },

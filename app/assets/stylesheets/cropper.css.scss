@@ -1,12 +1,15 @@
+.cropper {
+  min-width: 600px;
+}
+
 .cropper-default-pic {
+  background-size: contain;
   background-image: asset-url("default-avatar.png");
 }
 
 .cropper-header > div {
   display: flex;
   background: #333;
-  // border: 1px solid #939393;
-  // border-width: 1px 1px 0 1px;
 }
 
 .cropper-title, .cropper-close {
@@ -26,4 +29,55 @@
   background-color: #FFFFFF;
   color: #434649;
   padding: 15px 20px;
+}
+
+.cropper-uploader {
+  display: flex;
+  background: #eee;
+  padding: 15px 0;
+  // min-width: 600px;
+}
+
+.cropper-uploader .flex-left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.cropper-uploader .flex-right {
+  flex: 1;
+}
+
+.cropper-instructions {
+  padding: 0 20px 10px;
+}
+
+.cropper-instructions h4 {
+  font-weight: bold;
+  line-height: 16px;
+  font-size: 13px;
+  color: #666;
+  vertical-align: baseline;
+}
+
+.cropper-instructions p {
+  line-height: 17px;
+  font-weight: normal;
+  font-size: 11px;
+  color: #888;
+  vertical-align: baseline;
+}
+
+.cropper-instructions p label {
+  color: #006fa6;
+}
+
+.cropper-container {
+  position: relative;
+  align-self: center;
+}
+
+.cropper-image {
+  width: 100%;
+  height: 100%;
 }
