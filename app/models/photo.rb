@@ -15,16 +15,10 @@ class Photo < ActiveRecord::Base
     !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
   end
 
-  def image_from_url(url)
-    self.image = URI.parse(url)
-  end
-  #
   private
 
   def reprocess_image
     image.reprocess!
-    # image.assign(image)
-    image.save
   end
 
 

@@ -10,15 +10,15 @@ module.exports = {
   content : {
     position        : 'fixed',
     top             : '100px',
-    left            : '200px',
-    right           : '200px',
+    left            : '250px',
+    right           : '250px',
     bottom          : '100px',
     backgroundColor : '#eee',
-    border          : '1px solid #ccc',
+    border          : '0',
     background      : '#fff',
-    borderRadius    : '4px',
+    borderRadius    : '0',
     outline         : 'none',
-    padding         : '20px',
+    padding         : '0',
     opacity         : '0',
     transition      : 'opacity 1s'
   }

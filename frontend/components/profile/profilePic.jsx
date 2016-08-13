@@ -14,6 +14,7 @@ var ProfilePic = React.createClass({
   getInitialState: function() {
     return {
       modalOpen: false,
+      cropperURL: this.props.avatar || null
     };
   },
 
@@ -38,7 +39,7 @@ var ProfilePic = React.createClass({
   },
 
   _onClick: function() {
-    CropperActions.receiveTempAvatarURL(this.props.avatar);
+    // CropperActions.receiveTempAvatarURL(this.props.avatar);
     this.openModal();
   },
 
@@ -47,8 +48,7 @@ var ProfilePic = React.createClass({
     e.preventDefault();
   },
 
-  _handleUpload: function(url, cropData) {
-    var data = $.extend({url: url}, cropData);
+  _handleUpload: function(data) {
     var params = { photo: data };
     PhotoUtil.uploadAvatar(params);
   },
@@ -57,8 +57,9 @@ var ProfilePic = React.createClass({
     var reader = new FileReader();
 
     reader.onloadend = function() {
-      CropperActions.receiveTempAvatarURL(reader.result);
-    };
+      // CropperActions.receiveTempAvatarURL(reader.result);
+      this.setState({ cropperURL: reader.result });
+    }.bind(this);
 
     if (file) {
       reader.readAsDataURL(file);
@@ -101,13 +102,11 @@ var ProfilePic = React.createClass({
           style={ModalStyle}
           onAfterOpen={this.onModalOpen}
         >
-          <h2>The Modal</h2>
-            <Cropper
-              width={270}
-              height={270}
-              crop={this._handleUpload}
-              uploadImage={this._tempAvatarUpload}
-              />
+          <Cropper
+            imageURL={this.state.cropperURL}
+            crop={this._handleUpload}
+            uploadImage={this._tempAvatarUpload}
+            />
         </Modal>
       </div>
     );

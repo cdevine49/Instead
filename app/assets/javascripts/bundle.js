@@ -35684,7 +35684,8 @@
 	
 	  getInitialState: function () {
 	    return {
-	      modalOpen: false
+	      modalOpen: false,
+	      cropperURL: this.props.avatar || null
 	    };
 	  },
 	
@@ -35709,7 +35710,7 @@
 	  },
 	
 	  _onClick: function () {
-	    CropperActions.receiveTempAvatarURL(this.props.avatar);
+	    // CropperActions.receiveTempAvatarURL(this.props.avatar);
 	    this.openModal();
 	  },
 	
@@ -35718,8 +35719,7 @@
 	    e.preventDefault();
 	  },
 	
-	  _handleUpload: function (url, cropData) {
-	    var data = $.extend({ url: url }, cropData);
+	  _handleUpload: function (data) {
 	    var params = { photo: data };
 	    PhotoUtil.uploadAvatar(params);
 	  },
@@ -35728,8 +35728,9 @@
 	    var reader = new FileReader();
 	
 	    reader.onloadend = function () {
-	      CropperActions.receiveTempAvatarURL(reader.result);
-	    };
+	      // CropperActions.receiveTempAvatarURL(reader.result);
+	      this.setState({ cropperURL: reader.result });
+	    }.bind(this);
 	
 	    if (file) {
 	      reader.readAsDataURL(file);
@@ -35774,14 +35775,8 @@
 	          style: ModalStyle,
 	          onAfterOpen: this.onModalOpen
 	        },
-	        React.createElement(
-	          'h2',
-	          null,
-	          'The Modal'
-	        ),
 	        React.createElement(Cropper, {
-	          width: 270,
-	          height: 270,
+	          imageURL: this.state.cropperURL,
 	          crop: this._handleUpload,
 	          uploadImage: this._tempAvatarUpload
 	        })
@@ -35809,15 +35804,15 @@
 	  content: {
 	    position: 'fixed',
 	    top: '100px',
-	    left: '200px',
-	    right: '200px',
+	    left: '250px',
+	    right: '250px',
 	    bottom: '100px',
 	    backgroundColor: '#eee',
-	    border: '1px solid #ccc',
+	    border: '0',
 	    background: '#fff',
-	    borderRadius: '4px',
+	    borderRadius: '0',
 	    outline: 'none',
-	    padding: '20px',
+	    padding: '0',
 	    opacity: '0',
 	    transition: 'opacity 1s'
 	  }
@@ -35886,24 +35881,16 @@
 	  },
 	
 	  componentDidMount: function () {
-	    if (CropperStore.URL()) {
-	      this.jCrop();
-	    }
-	    this.cropperStoreToken = CropperStore.addListener(this._onChange);
-	  },
-	
-	  _onChange: function () {
-	    var url = CropperStore.URL();
-	    this.setState({ imageURL: url });
-	    if (this.state.jcrop) {
-	      $('.jcrop-holder img').attr('src', url);
-	    } else {
+	    if (this.props.imageURL) {
 	      this.jCrop();
 	    }
 	  },
 	
-	  componentWillUnmount: function () {
-	    this.cropperStoreToken.remove();
+	  componentWillReceiveProps: function (nextProps) {
+	    $('.jcrop-holder img').attr('src', nextProps.imageURL);
+	    var that = this;
+	    that.props.imageURL = nextProps.imageURL;
+	    that.jCrop();
 	  },
 	
 	  jCrop: function () {
@@ -35913,8 +35900,6 @@
 	      onSelect: that.update_crop,
 	      setSelect: [0, 0, 270, 270],
 	      aspectRatio: 1
-	    }, function () {
-	      that.setState({ jcrop: this });
 	    });
 	  },
 	
@@ -35928,6 +35913,7 @@
 	      marginLeft: '-' + Math.round(rx * coords.x) + 'px',
 	      marginTop: '-' + Math.round(ry * coords.y) + 'px'
 	    });
+	
 	    var ratio = $('#cropbox')[0].naturalWidth / this.props.width;
 	    $("#crop_x").val(Math.round(coords.x * ratio));
 	    $("#crop_y").val(Math.round(coords.y * ratio));
@@ -35947,7 +35933,8 @@
 	    cropArray.forEach(function (dim) {
 	      cropData[dim.name] = dim.value;
 	    });
-	    this.props.crop(this.state.imageURL, cropData);
+	    var data = $.extend({ image: this.props.imageURL }, cropData);
+	    this.props.crop(data);
 	  },
 	
 	  render: function () {
@@ -35961,61 +35948,82 @@
 	      null,
 	      React.createElement(
 	        'header',
-	        null,
+	        { className: 'cropper-header' },
 	        React.createElement(
-	          'h3',
+	          'div',
 	          null,
 	          React.createElement(
 	            'span',
-	            null,
+	            { className: 'cropper-title' },
 	            'Edit Photo'
 	          ),
 	          React.createElement(
-	            'span',
-	            null,
+	            'button',
+	            { className: 'cropper-close' },
 	            'x'
 	          )
 	        ),
 	        React.createElement(
-	          'p',
-	          null,
+	          'h3',
+	          { className: 'cropper-message' },
 	          'Make sure you\'re looking your best...'
-	        ),
-	        React.createElement('input', { type: 'file', accept: 'image/*', onChange: this.uploadImage })
+	        )
 	      ),
 	      React.createElement(
 	        'div',
-	        { style: wrapperStyle },
+	        { className: 'cropper-cropbox' },
+	        React.createElement(
+	          'h4',
+	          null,
+	          'Adjust Photo'
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'Drag the ',
+	          this.props.cropSquareColor,
+	          ' rectangle to change position and size.  ',
+	          React.createElement(
+	            'label',
+	            { 'for': 'file-upload', 'class': 'cropper-file-upload' },
+	            'Change Photo.',
+	            React.createElement('input', {
+	              type: 'file',
+	              id: 'file-upload',
+	              accept: 'image/*',
+	              onChange: this.uploadImage })
+	          )
+	        ),
 	        this.display()
 	      ),
 	      React.createElement(
 	        'div',
 	        { className: 'new-avatar-preview' },
-	        React.createElement('img', { src: this.state.imageURL, id: 'preview' })
+	        React.createElement('img', { src: this.props.imageURL, id: 'preview' })
 	      ),
 	      React.createElement(
 	        'form',
 	        { onSubmit: this.handleCrop, ref: 'cropForm' },
 	        React.createElement('input', {
-	          type: 'number',
+	          type: 'hidden',
 	          id: 'crop_x',
 	          name: 'crop_x',
 	          defaultValue: '0'
 	        }),
 	        React.createElement('input', {
-	          type: 'number',
+	          type: 'hidden',
 	          id: 'crop_y',
 	          name: 'crop_y',
 	          defaultValue: '0'
 	        }),
 	        React.createElement('input', {
-	          type: 'number',
+	          type: 'hidden',
 	          id: 'crop_w',
 	          name: 'crop_w',
 	          defaultValue: this.props.width
 	        }),
 	        React.createElement('input', {
-	          type: 'number',
+	          type: 'hidden',
 	          id: 'crop_h',
 	          name: 'crop_h',
 	          defaultValue: this.props.height
@@ -36027,11 +36035,23 @@
 	    );
 	  },
 	
+	  getDefaultProps: function () {
+	    return {
+	      cropSquareColor: 'yellow',
+	      height: 270,
+	      width: 270
+	    };
+	  },
+	
 	  display: function () {
-	    if (this.state.imageURL) {
-	      return React.createElement('img', { id: 'cropbox', className: 'profile-pic', src: this.state.imageURL });
+	    var cropboxStyle = {
+	      width: this.props.width,
+	      height: this.props.height
+	    };
+	    if (this.props.imageURL) {
+	      return React.createElement('img', { id: 'cropbox', style: cropboxStyle, src: this.props.imageURL });
 	    } else {
-	      return React.createElement('div', { className: 'default-profile-pic' });
+	      return React.createElement('div', { className: 'cropper-default-pic', style: cropboxStyle });
 	    }
 	  }
 	

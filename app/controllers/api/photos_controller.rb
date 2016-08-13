@@ -15,12 +15,8 @@ class Api::PhotosController < ApplicationController
   end
 
   def upload_avatar
-    @photo = Photo.new
-    @photo.image_from_url(photo_params[:url])
-    [:crop_x, :crop_y, :crop_w, :crop_h].each do |crop|
-        @photo.send("#{crop}=", photo_params[crop])
-    end
-    
+    @photo = Photo.new(photo_params)
+
     if @photo.save
       current_user.profile.avatar = @photo
       render :show

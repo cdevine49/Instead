@@ -17,7 +17,7 @@
 
  html, body, header, nav, h1, a, ul, li,
 strong, main, section, img, div, span h2,
-p, form, fieldset, label, input, textarea,
+h3, h4, h5, h6, p, form, fieldset, label, input, textarea,
 button, article, footer, small {
   margin: 0;
   padding: 0;
@@ -59,6 +59,10 @@ button, article, footer, small {
    font-weight: normal;
  }
 
+#file-upload {
+  opacity: 0;
+}
+
  .group:after {
    content: '';
    display: block;
@@ -67,4 +71,12 @@ button, article, footer, small {
 
 .hidden {
   display: none
+}
+
+.flex-left {
+  align-self: flex-start;
+}
+
+.flex-right {
+  align-self: flex-end;
 }

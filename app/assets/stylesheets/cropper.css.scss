@@ -1,0 +1,29 @@
+.cropper-default-pic {
+  background-image: asset-url("default-avatar.png");
+}
+
+.cropper-header > div {
+  display: flex;
+  background: #333;
+  // border: 1px solid #939393;
+  // border-width: 1px 1px 0 1px;
+}
+
+.cropper-title, .cropper-close {
+  font-size: 14px;
+  line-height: 16px;
+  color: #cccfd3;
+  padding: 10px 20px;
+}
+
+.cropper-close {
+  margin-left: auto;
+}
+
+.cropper-message {
+  font-size: 18px;
+  line-height: 22px;
+  background-color: #FFFFFF;
+  color: #434649;
+  padding: 15px 20px;
+}
