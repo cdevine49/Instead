@@ -28,7 +28,7 @@ var ProfilePic = React.createClass({
   },
 
   closeModal: function() {
-    this.setState({ modalOpen: false });
+    this.setState({ modalOpen: false, cropperURL: this.props.avatar });
   },
 
   _drop: function(e) {

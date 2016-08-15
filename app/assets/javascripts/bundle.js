@@ -35699,7 +35699,7 @@
 	  },
 	
 	  closeModal: function () {
-	    this.setState({ modalOpen: false });
+	    this.setState({ modalOpen: false, cropperURL: this.props.avatar });
 	  },
 	
 	  _drop: function (e) {
@@ -35919,6 +35919,7 @@
 	    $("#crop_y").val(Math.round(coords.y * ratio));
 	    $("#crop_w").val(Math.round(coords.w * ratio));
 	    $("#crop_h").val(Math.round(coords.h * ratio));
+	    $(".cropper-submit").prop('disabled', this.disable(ratio));
 	  },
 	
 	  uploadImage: function (e) {
@@ -35927,14 +35928,15 @@
 	  },
 	
 	  handleCrop: function (e) {
-	    e.preventDefault();
-	    var cropData = {};
-	    var cropArray = $(this.refs.cropForm.elements).serializeArray();
-	    cropArray.forEach(function (dim) {
-	      cropData[dim.name] = dim.value;
-	    });
-	    var data = $.extend({ image: this.props.imageURL }, cropData);
-	    this.props.crop(data);
+	    console.log("not disabled");
+	    // e.preventDefault();
+	    // var cropData = {};
+	    // var cropArray = $(this.refs.cropForm.elements).serializeArray();
+	    // cropArray.forEach(function(dim) {
+	    //   cropData[dim.name] = dim.value;
+	    // });
+	    // var data = $.extend({image: this.props.imageURL}, cropData);
+	    // this.props.crop(data);
 	  },
 	
 	  render: function () {
@@ -36005,6 +36007,19 @@
 	            'div',
 	            { className: 'cropper-container', style: wrapperStyle },
 	            this.display()
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'cropper-panel' },
+	            React.createElement('button', {
+	              className: 'cropper-sprites cropper-rotate-left',
+	              title: 'Rotate Left'
+	            }),
+	            React.createElement('button', {
+	              className: 'cropper-sprites cropper-rotate-right',
+	              title: 'Rotate Right'
+	            }),
+	            React.createElement('div', { className: 'cropper-sprites cropper-privacy' })
 	          )
 	        ),
 	        React.createElement(
@@ -36059,8 +36074,30 @@
 	          defaultValue: this.props.height
 	        }),
 	        React.createElement('input', {
-	          type: 'submit',
-	          value: 'Crop' })
+	          type: 'hidden',
+	          id: 'rotation',
+	          name: 'rotation',
+	          defaultValue: 0
+	        }),
+	        React.createElement(
+	          'div',
+	          { className: 'cropper-actions' },
+	          React.createElement('input', {
+	            type: 'submit',
+	            value: 'Save',
+	            className: 'cropper-submit'
+	          }),
+	          React.createElement(
+	            'button',
+	            { className: 'cropper-cancel' },
+	            'Cancel'
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'cropper-delete' },
+	            'Delete Photo'
+	          )
+	        )
 	      )
 	    );
 	  },
@@ -36083,6 +36120,26 @@
 	    } else {
 	      return React.createElement('div', { className: 'cropper-default-pic cropper-image' });
 	    }
+	  },
+	
+	  disable: function (ratio) {
+	    var zeros = true,
+	        width = true,
+	        height = true;
+	    $.each(["#crop_x", "#crop_y", "#rotation"], function (index, id) {
+	      if ($(id).val() != 0) {
+	        _zeros = false;
+	      }
+	    });
+	
+	    if ($("#crop_w").val() != this.props.width * ratio) {
+	      width = false;
+	    }
+	    if ($("#crop_h").val() != this.props.height * ratio) {
+	      height = false;
+	    }
+	
+	    return zeros && width && height;
 	  }
 	
 	});
