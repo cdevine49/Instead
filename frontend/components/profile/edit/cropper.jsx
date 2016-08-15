@@ -184,7 +184,7 @@ var Cropper = React.createClass({
 
   getDefaultProps: function() {
     return {
-      cropSquareColor: 'yellow',
+      cropSquareColor: '',
       height: 270,
       width: 270
     };
