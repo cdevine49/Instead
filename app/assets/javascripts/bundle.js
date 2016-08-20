@@ -54,7 +54,7 @@
 	var SignUp = __webpack_require__(280);
 	var Jobs = __webpack_require__(285);
 	var Profile = __webpack_require__(290);
-	var Home = __webpack_require__(303);
+	var Home = __webpack_require__(306);
 	
 	var UserUtil = __webpack_require__(281);
 	var SessionUtil = __webpack_require__(252);
@@ -27883,7 +27883,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'main',
-	      null,
+	      { className: 'app' },
 	      React.createElement(Header, null),
 	      this.props.children
 	    );
@@ -35486,11 +35486,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(260);
 	var ProfileUtil = __webpack_require__(291);
 	var ProfileStore = __webpack_require__(294);
-	var ProfilePic = __webpack_require__(295);
-	var Item = __webpack_require__(300);
+	var ProfileCard = __webpack_require__(309);
 	
 	var Profile = React.createClass({
 	  displayName: 'Profile',
@@ -35498,7 +35496,8 @@
 	
 	  getInitialState: function () {
 	    return {
-	      profile: null
+	      profile: null,
+	      addWorkExperience: false
 	    };
 	  },
 	
@@ -35515,22 +35514,60 @@
 	    this.setState({ profile: ProfileStore.profile() });
 	  },
 	
+	  add: function (type, bool) {
+	    switch (type) {
+	      case "WorkExperience":
+	        this.setState({ addWorkExperience: bool });
+	        break;
+	    }
+	  },
+	
+	  addWorkExperience: function () {
+	    if (this.state.addWorkExperience) {
+	      return React.createElement(Edit, { field: 'WorkExperience', type: 'create' });
+	    }
+	  },
+	
 	  render: function () {
 	    if (this.state.profile) {
-	      var firstName = this.state.profile.first_name;
-	      var lastName = this.state.profile.last_name;
-	      var birthday = this.state.profile.birthday;
-	      var about = this.state.profile.about;
-	      var avatar = this.state.profile.avatar;
-	      var editable = this.state.profile.user_id === SessionStore.currentUser().id;
+	      var workExperiences = this.state.profile.work_experiences.map(function (we, i) {
+	        React.createElement(WorkExperience, { key: i, editable: editable,
+	          position: we.position,
+	          company: we.company,
+	          start: we.start,
+	          end: we.end,
+	          location: we.location,
+	          description: we.description
+	        });
+	      });
 	      return React.createElement(
 	        'main',
-	        null,
-	        'Profile',
-	        React.createElement(ProfilePic, { avatar: avatar }),
-	        React.createElement(Item, { editable: editable, field: 'Name', input: firstName + " " + lastName }),
-	        React.createElement(Item, { editable: editable, field: 'Birthday' }),
-	        React.createElement(Item, { editable: editable, field: 'About' })
+	        { className: 'profile' },
+	        React.createElement(ProfileCard, { profile: this.state.profile }),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'header',
+	            null,
+	            React.createElement(
+	              'h2',
+	              null,
+	              'Experience'
+	            ),
+	            React.createElement(
+	              'button',
+	              { onClick: this.add.bind(this, "WorkExperience", true) },
+	              'Add Position'
+	            )
+	          ),
+	          this.addWorkExperience(),
+	          React.createElement(
+	            'ul',
+	            null,
+	            workExperiences
+	          )
+	        )
 	      );
 	    } else {
 	      return React.createElement(
@@ -35571,14 +35608,12 @@
 	    });
 	  },
 	
-	  updateProfile: function (data, bool) {
+	  updateProfile: function (data) {
 	    return new Promise(function (resolve, reject) {
 	      $.ajax({
 	        type: "PATCH",
 	        url: "/api/user_profile/",
 	        dataType: "json",
-	        processData: bool,
-	        contentType: bool,
 	        data: data,
 	        success: function (profile) {
 	          ProfileActions.receiveProfile(profile);
@@ -35673,10 +35708,10 @@
 	
 	var ProfileStore = __webpack_require__(294);
 	
-	var CropperActions = __webpack_require__(305);
+	var CropperActions = __webpack_require__(297);
 	var Cropper = __webpack_require__(299);
 	
-	var PhotoUtil = __webpack_require__(309);
+	var PhotoUtil = __webpack_require__(302);
 	
 	var ProfilePic = React.createClass({
 	  displayName: 'ProfilePic',
@@ -35684,7 +35719,7 @@
 	
 	  getInitialState: function () {
 	    return {
-	      modalOpen: true,
+	      modalOpen: false,
 	      cropperURL: this.props.avatar || null
 	    };
 	  },
@@ -35823,32 +35858,31 @@
 /* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(261).Store;
 	var AppDispatcher = __webpack_require__(254);
-	var CropperStore = new Store(AppDispatcher);
-	
 	var CropperConstants = __webpack_require__(298);
 	
-	var _URL;
+	CropperActions = {
 	
-	CropperStore.URL = function () {
-	  return _URL;
-	};
+	  receiveTempAvatarURL: function (url) {
+	    var action = {
+	      actionType: CropperConstants.RECEIVE_TEMP_AVATAR_URL,
+	      url: url
+	    };
 	
-	CropperStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case CropperConstants.RECEIVE_TEMP_AVATAR_URL:
-	      _URL = payload.url;
-	      CropperStore.__emitChange();
-	      break;
-	    case CropperConstants.DELETE_TEMP_PROFILE_PIC:
-	      _URL = null;
-	      CropperStore.__emitChange();
-	      break;
+	    AppDispatcher.dispatch(action);
+	  },
+	
+	  deleteTempProfilePic: function () {
+	    var action = {
+	      actionType: CropperConstants.DELETE_TEMP_PROFILE_PIC
+	    };
+	
+	    AppDispatcher.dispatch(action);
 	  }
+	
 	};
 	
-	module.exports = CropperStore;
+	module.exports = CropperActions;
 
 /***/ },
 /* 298 */
@@ -35867,8 +35901,8 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(38);
-	var CropperUtil = __webpack_require__(304);
-	var CropperStore = __webpack_require__(297);
+	var CropperUtil = __webpack_require__(300);
+	var CropperStore = __webpack_require__(301);
 	
 	var Cropper = React.createClass({
 	  displayName: 'Cropper',
@@ -36150,188 +36184,7 @@
 /* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
-	var Edit = __webpack_require__(301);
-	
-	var ProfileItem = React.createClass({
-	  displayName: 'ProfileItem',
-	
-	
-	  _edit: function () {
-	    if (this.props.editable) {
-	      return React.createElement(Edit, { field: this.props.field, input: this.props.input });
-	    }
-	  },
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'span',
-	        null,
-	        this.props.field,
-	        ':'
-	      ),
-	      React.createElement(
-	        'span',
-	        null,
-	        this.props.input
-	      ),
-	      this._edit()
-	    );
-	  }
-	
-	});
-	
-	module.exports = ProfileItem;
-
-/***/ },
-/* 301 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ProfileUtil = __webpack_require__(291);
-	var EditName = __webpack_require__(302);
-	
-	var Edit = React.createClass({
-	  displayName: 'Edit',
-	
-	
-	  getInitialState: function () {
-	    return {
-	      formOpen: false
-	    };
-	  },
-	
-	  _editing: function () {
-	    switch (this.props.field) {
-	      case "Name":
-	        return React.createElement(EditName, {
-	          firstName: this.props.input.split(" ")[0],
-	          lastName: this.props.input.split(" ")[1]
-	        });
-	    }
-	  },
-	
-	  _toggle: function (e) {
-	    if (e) {
-	      e.preventDefault();
-	    }
-	    this.setState({ formOpen: !this.state.formOpen });
-	  },
-	
-	  _handleSubmit: function (e) {
-	    e.preventDefault();
-	    var fields = $(this.refs.form.elements).serialize();
-	
-	    ProfileUtil.updateProfile(fields, true).then(this._toggle);
-	  },
-	
-	  render: function () {
-	    if (this.state.formOpen) {
-	      return React.createElement(
-	        'form',
-	        { ref: 'form', onSubmit: this._handleSubmit },
-	        this._editing(),
-	        React.createElement(
-	          'button',
-	          { type: 'submit' },
-	          'Save'
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this._toggle },
-	          'Cancel'
-	        )
-	      );
-	    } else {
-	      return React.createElement('div', { className: 'edit-button', onClick: this._toggle });
-	    }
-	  }
-	});
-	
-	module.exports = Edit;
-
-/***/ },
-/* 302 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var EditName = React.createClass({
-	  displayName: "EditName",
-	
-	
-	  // _onChange: function(e) {
-	  //   this.setState({file: e.currentTarget.files[0]});
-	  // },
-	
-	  render: function () {
-	    return React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        "label",
-	        { htmlFor: "first_name" },
-	        "First"
-	      ),
-	      React.createElement("input", {
-	        type: "text",
-	        id: "first_name",
-	        name: "user_profile[first_name]",
-	        defaultValue: this.props.firstName,
-	        placeholder: "First",
-	        className: ""
-	      }),
-	      React.createElement(
-	        "label",
-	        { htmlFor: "last_name" },
-	        "Last"
-	      ),
-	      React.createElement("input", {
-	        type: "text",
-	        id: "last_name",
-	        name: "user_profile[last_name]",
-	        defaultValue: this.props.lastName,
-	        placeholder: "Last",
-	        className: ""
-	      })
-	    );
-	  }
-	
-	});
-	
-	module.exports = EditName;
-
-/***/ },
-/* 303 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	
-	var Home = React.createClass({
-	  displayName: 'Home',
-	
-	
-	  render: function () {
-	    return React.createElement(
-	      'main',
-	      null,
-	      'Home'
-	    );
-	  }
-	
-	});
-	
-	module.exports = Home;
-
-/***/ },
-/* 304 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CropperActions = __webpack_require__(305);
+	var CropperActions = __webpack_require__(297);
 	
 	CropperUtil = {
 	
@@ -36366,40 +36219,38 @@
 	module.exports = CropperUtil;
 
 /***/ },
-/* 305 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Store = __webpack_require__(261).Store;
 	var AppDispatcher = __webpack_require__(254);
+	var CropperStore = new Store(AppDispatcher);
+	
 	var CropperConstants = __webpack_require__(298);
 	
-	CropperActions = {
+	var _URL;
 	
-	  receiveTempAvatarURL: function (url) {
-	    var action = {
-	      actionType: CropperConstants.RECEIVE_TEMP_AVATAR_URL,
-	      url: url
-	    };
-	
-	    AppDispatcher.dispatch(action);
-	  },
-	
-	  deleteTempProfilePic: function () {
-	    var action = {
-	      actionType: CropperConstants.DELETE_TEMP_PROFILE_PIC
-	    };
-	
-	    AppDispatcher.dispatch(action);
-	  }
-	
+	CropperStore.URL = function () {
+	  return _URL;
 	};
 	
-	module.exports = CropperActions;
+	CropperStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case CropperConstants.RECEIVE_TEMP_AVATAR_URL:
+	      _URL = payload.url;
+	      CropperStore.__emitChange();
+	      break;
+	    case CropperConstants.DELETE_TEMP_PROFILE_PIC:
+	      _URL = null;
+	      CropperStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = CropperStore;
 
 /***/ },
-/* 306 */,
-/* 307 */,
-/* 308 */,
-/* 309 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var PhotoActions = __webpack_require__(292);
@@ -36445,6 +36296,417 @@
 	};
 	
 	module.exports = PhotoUtil;
+
+/***/ },
+/* 303 */,
+/* 304 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ProfileUtil = __webpack_require__(291);
+	var EditName = __webpack_require__(305);
+	var EditHeadline = __webpack_require__(311);
+	var EditWorkExperience = __webpack_require__(308);
+	
+	var Edit = React.createClass({
+	  displayName: 'Edit',
+	
+	
+	  _editing: function () {
+	    switch (this.props.field) {
+	      case "Name":
+	        return React.createElement(EditName, {
+	          firstName: this.props.firstName,
+	          lastName: this.props.lastName
+	        });
+	      case "Headline":
+	        return React.createElement(EditHeadline, {
+	          headline: this.props.headline
+	        });
+	    }
+	  },
+	
+	  _toggle: function (e) {
+	    if (e) {
+	      e.preventDefault();
+	    }
+	    this.props.close();
+	  },
+	
+	  _handleSubmit: function (e) {
+	    e.preventDefault();
+	    var fields = $(this.refs.form.elements).serialize();
+	    ProfileUtil.updateProfile(fields).then(this.props.close);
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'form',
+	      { className: 'profile-card-edit-form', ref: 'form', onSubmit: this._handleSubmit },
+	      React.createElement('strong', { className: 'profile-card-edit-form-pointer' }),
+	      this._editing(),
+	      React.createElement(
+	        'button',
+	        { type: 'submit' },
+	        'Save'
+	      ),
+	      React.createElement(
+	        'button',
+	        { onClick: this._toggle },
+	        'Cancel'
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = Edit;
+
+/***/ },
+/* 305 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var EditName = React.createClass({
+	  displayName: 'EditName',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'profile-card-edit-name' },
+	      React.createElement('label', { htmlFor: 'first_name' }),
+	      React.createElement('input', {
+	        type: 'text',
+	        id: 'first_name',
+	        name: 'user_profile[first_name]',
+	        defaultValue: this.props.firstName,
+	        placeholder: 'First',
+	        className: ''
+	      }),
+	      React.createElement('label', { htmlFor: 'last_name' }),
+	      React.createElement('input', {
+	        type: 'text',
+	        id: 'last_name',
+	        name: 'user_profile[last_name]',
+	        defaultValue: this.props.lastName,
+	        placeholder: 'Last',
+	        className: ''
+	      })
+	    );
+	  }
+	
+	});
+	
+	module.exports = EditName;
+
+/***/ },
+/* 306 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Home = React.createClass({
+	  displayName: 'Home',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'main',
+	      null,
+	      'Home'
+	    );
+	  }
+	
+	});
+	
+	module.exports = Home;
+
+/***/ },
+/* 307 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var Edit = __webpack_require__(304);
+	
+	var Name = React.createClass({
+	  displayName: 'Name',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      editing: false
+	    };
+	  },
+	
+	  edit: function () {
+	    this.setState({ editing: true });
+	  },
+	
+	  closeEdit: function () {
+	    this.setState({ editing: false });
+	  },
+	
+	  _editButton: function () {
+	    if (this.props.editable) {
+	      return React.createElement(
+	        'div',
+	        {
+	          className: 'profile-card-edit-button' },
+	        React.createElement('i', { className: 'fa fa-pencil', onClick: this.edit })
+	      );
+	    }
+	  },
+	
+	  _editForm: function () {
+	    if (this.props.editable && this.state.editing) {
+	      return React.createElement(Edit, {
+	        field: 'Name',
+	        close: this.closeEdit,
+	        firstName: this.props.firstName,
+	        lastName: this.props.lastName
+	      });
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'profile-card-name-wrapper profile-card-wrapper' },
+	      React.createElement(
+	        'h1',
+	        { className: 'profile-card-name profile-card-wrapped' },
+	        this.props.firstName + " " + this.props.lastName
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'profile-card-edit-box' },
+	        this._editButton(),
+	        this._editForm()
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Name;
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var EditWorkExperience = React.createClass({
+	  displayName: "EditWorkExperience",
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "label",
+	        { htmlFor: "position" },
+	        "Position"
+	      ),
+	      React.createElement("input", {
+	        type: "text",
+	        id: "first_name",
+	        name: "work_experiences[position]",
+	        defaultValue: this.props.position,
+	        placeholder: "First",
+	        className: ""
+	      }),
+	      React.createElement(
+	        "label",
+	        { htmlFor: "company" },
+	        "Company"
+	      ),
+	      React.createElement("input", {
+	        type: "text",
+	        id: "last_name",
+	        name: "work_experiences[company]",
+	        defaultValue: this.props.company,
+	        placeholder: "Last",
+	        className: ""
+	      }),
+	      React.createElement(
+	        "label",
+	        { htmlFor: "start" },
+	        "Start Date"
+	      ),
+	      React.createElement("input", {
+	        type: "text",
+	        id: "last_name",
+	        name: "work_experiences[start]",
+	        defaultValue: this.props.company,
+	        placeholder: "Last",
+	        className: ""
+	      }),
+	      React.createElement(
+	        "label",
+	        { htmlFor: "end" },
+	        "End Date"
+	      ),
+	      React.createElement("input", {
+	        type: "text",
+	        id: "last_name",
+	        name: "work_experiences[end]",
+	        defaultValue: this.props.company,
+	        placeholder: "Last",
+	        className: ""
+	      })
+	    );
+	  }
+	
+	});
+	
+	module.exports = EditWorkExperience;
+
+/***/ },
+/* 309 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var SessionStore = __webpack_require__(260);
+	var ProfilePic = __webpack_require__(295);
+	var Edit = __webpack_require__(304);
+	var Name = __webpack_require__(307);
+	var Headline = __webpack_require__(310);
+	
+	var ProfileCard = React.createClass({
+	  displayName: 'ProfileCard',
+	
+	
+	  render: function () {
+	    var editable = this.props.profile.user_id === SessionStore.currentUser().id;
+	    var firstName = this.props.profile.first_name;
+	    var lastName = this.props.profile.last_name;
+	    var headline = this.props.profile.headline;
+	    var about = this.props.profile.about;
+	    var avatar = this.props.profile.avatar;
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'profile-card' },
+	      React.createElement(ProfilePic, { avatar: avatar }),
+	      React.createElement(
+	        'div',
+	        { className: 'profile-overview' },
+	        React.createElement(Name, { editable: editable, firstName: firstName, lastName: lastName }),
+	        React.createElement(Headline, { editable: editable, headline: headline })
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = ProfileCard;
+
+/***/ },
+/* 310 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var Edit = __webpack_require__(304);
+	
+	var Headline = React.createClass({
+	  displayName: 'Headline',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      editing: false
+	    };
+	  },
+	
+	  edit: function () {
+	    this.setState({ editing: true });
+	  },
+	
+	  closeEdit: function () {
+	    this.setState({ editing: false });
+	  },
+	
+	  _editButton: function () {
+	    if (this.props.editable) {
+	      return React.createElement(
+	        'div',
+	        {
+	          className: 'profile-card-edit-button' },
+	        React.createElement('i', { className: 'fa fa-pencil', onClick: this.edit })
+	      );
+	    }
+	  },
+	
+	  _editForm: function () {
+	    if (this.props.editable && this.state.editing) {
+	      return React.createElement(Edit, {
+	        field: 'Headline',
+	        close: this.closeEdit,
+	        headline: this.props.headline
+	      });
+	    }
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'profile-card-headline-wrapper profile-card-wrapper' },
+	      React.createElement(
+	        'h1',
+	        { className: 'profile-card-headline profile-card-wrapped' },
+	        this.props.headline
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'profile-card-edit-box' },
+	        this._editButton(),
+	        this._editForm()
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Headline;
+
+/***/ },
+/* 311 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var EditHeadline = React.createClass({
+	  displayName: "EditHeadline",
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement("label", { htmlFor: "headline" }),
+	      React.createElement("input", {
+	        type: "text",
+	        id: "headline",
+	        name: "user_profile[headline]",
+	        defaultValue: this.props.headline,
+	        placeholder: "Professional Headline",
+	        className: ""
+	      })
+	    );
+	  }
+	
+	});
+	
+	module.exports = EditHeadline;
 
 /***/ }
 /******/ ]);

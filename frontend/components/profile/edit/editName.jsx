@@ -3,14 +3,10 @@ var PropTypes = React.PropTypes;
 
 var EditName = React.createClass({
 
-  // _onChange: function(e) {
-  //   this.setState({file: e.currentTarget.files[0]});
-  // },
-
   render: function() {
     return (
-      <div>
-        <label htmlFor="first_name">First</label>
+      <div className='profile-card-edit-name'>
+        <label htmlFor="first_name"></label>
         <input
           type="text"
           id="first_name"
@@ -20,7 +16,7 @@ var EditName = React.createClass({
           className=""
         />
 
-        <label htmlFor="last_name">Last</label>
+        <label htmlFor="last_name"></label>
         <input
           type="text"
           id="last_name"

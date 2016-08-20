@@ -16,9 +16,9 @@ class Api::PhotosController < ApplicationController
 
   def upload_avatar
     @photo = Photo.new(photo_params)
-
+    @profile = current_user.profile
     if @photo.save
-      current_user.profile.avatar = @photo
+      @profile.avatar = @photo
       render :show
     else
       render json: { message: "Avatar wasn't saved"}

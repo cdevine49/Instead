@@ -1,15 +1,14 @@
 var React = require('react');
-var SessionStore = require('../stores/session');
 var ProfileUtil = require('../utils/profile');
 var ProfileStore = require('../stores/profile');
-var ProfilePic = require('./profile/profilePic');
-var Item = require('./profile/item');
+var ProfileCard = require('./profile/profileCard');
 
 var Profile = React.createClass({
 
   getInitialState: function() {
     return {
-      profile: null
+      profile: null,
+      addWorkExperience: false
     };
   },
 
@@ -26,21 +25,47 @@ var Profile = React.createClass({
     this.setState({ profile: ProfileStore.profile() });
   },
 
+  add: function(type, bool) {
+    switch (type) {
+      case "WorkExperience":
+        this.setState({ addWorkExperience: bool });
+      break;
+    }
+  },
+
+  addWorkExperience: function() {
+    if (this.state.addWorkExperience) {
+      return(
+        <Edit field="WorkExperience" type="create" />
+      );
+    }
+  },
+
   render: function() {
     if (this.state.profile) {
-      var firstName = this.state.profile.first_name;
-      var lastName = this.state.profile.last_name;
-      var birthday = this.state.profile.birthday;
-      var about = this.state.profile.about;
-      var avatar = this.state.profile.avatar;
-      var editable = this.state.profile.user_id === SessionStore.currentUser().id;
+      var workExperiences = this.state.profile.work_experiences.map(function(we, i) {
+        <WorkExperience key={i} editable={editable}
+          position={we.position}
+          company={we.company}
+          start={we.start}
+          end={we.end}
+          location={we.location}
+          description={we.description}
+          />;
+      });
       return (
-        <main>
-          Profile
-          <ProfilePic avatar={avatar} />
-          <Item editable={editable} field="Name" input={firstName + " " + lastName} />
-          <Item editable={editable} field="Birthday"   />
-          <Item editable={editable} field="About"  />
+        <main className='profile'>
+          <ProfileCard profile={this.state.profile} />
+          <div>
+            <header>
+              <h2>Experience</h2>
+              <button onClick={this.add.bind(this, "WorkExperience", true)}>Add Position</button>
+            </header>
+            {this.addWorkExperience()}
+            <ul>
+              {workExperiences}
+            </ul>
+        </div>
         </main>
       );
     } else {

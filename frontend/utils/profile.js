@@ -20,14 +20,12 @@ ProfileUtil = {
     });
   },
 
-  updateProfile: function (data, bool) {
+  updateProfile: function (data) {
     return new Promise( function(resolve, reject) {
       $.ajax({
         type: "PATCH",
         url: "/api/user_profile/",
         dataType: "json",
-        processData: bool,
-        contentType: bool,
         data: data,
         success: function (profile) {
           ProfileActions.receiveProfile(profile);
@@ -39,7 +37,7 @@ ProfileUtil = {
       });
     });
   }
-  
+
 };
 
 module.exports = ProfileUtil;

@@ -5,7 +5,7 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <main>
+      <main className='app'>
         <Header />
         {this.props.children}
       </main>
