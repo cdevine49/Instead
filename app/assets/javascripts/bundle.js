@@ -35486,9 +35486,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(260);
 	var ProfileUtil = __webpack_require__(291);
 	var ProfileStore = __webpack_require__(294);
 	var ProfileCard = __webpack_require__(309);
+	var WorkExperiences = __webpack_require__(312);
 	
 	var Profile = React.createClass({
 	  displayName: 'Profile',
@@ -35496,8 +35498,7 @@
 	
 	  getInitialState: function () {
 	    return {
-	      profile: null,
-	      addWorkExperience: false
+	      profile: null
 	    };
 	  },
 	
@@ -35514,60 +35515,15 @@
 	    this.setState({ profile: ProfileStore.profile() });
 	  },
 	
-	  add: function (type, bool) {
-	    switch (type) {
-	      case "WorkExperience":
-	        this.setState({ addWorkExperience: bool });
-	        break;
-	    }
-	  },
-	
-	  addWorkExperience: function () {
-	    if (this.state.addWorkExperience) {
-	      return React.createElement(Edit, { field: 'WorkExperience', type: 'create' });
-	    }
-	  },
-	
 	  render: function () {
 	    if (this.state.profile) {
-	      var workExperiences = this.state.profile.work_experiences.map(function (we, i) {
-	        React.createElement(WorkExperience, { key: i, editable: editable,
-	          position: we.position,
-	          company: we.company,
-	          start: we.start,
-	          end: we.end,
-	          location: we.location,
-	          description: we.description
-	        });
-	      });
+	      var editable = this.state.profile.user_id === SessionStore.currentUser().id;
+	
 	      return React.createElement(
 	        'main',
 	        { className: 'profile' },
-	        React.createElement(ProfileCard, { profile: this.state.profile }),
-	        React.createElement(
-	          'div',
-	          null,
-	          React.createElement(
-	            'header',
-	            null,
-	            React.createElement(
-	              'h2',
-	              null,
-	              'Experience'
-	            ),
-	            React.createElement(
-	              'button',
-	              { onClick: this.add.bind(this, "WorkExperience", true) },
-	              'Add Position'
-	            )
-	          ),
-	          this.addWorkExperience(),
-	          React.createElement(
-	            'ul',
-	            null,
-	            workExperiences
-	          )
-	        )
+	        React.createElement(ProfileCard, { profile: this.state.profile, editable: editable }),
+	        React.createElement(WorkExperiences, { workExperiences: this.state.profile.workExperiences, editable: editable })
 	      );
 	    } else {
 	      return React.createElement(
@@ -36584,7 +36540,6 @@
 	
 	
 	  render: function () {
-	    var editable = this.props.profile.user_id === SessionStore.currentUser().id;
 	    var firstName = this.props.profile.first_name;
 	    var lastName = this.props.profile.last_name;
 	    var headline = this.props.profile.headline;
@@ -36598,8 +36553,8 @@
 	      React.createElement(
 	        'div',
 	        { className: 'profile-overview' },
-	        React.createElement(Name, { editable: editable, firstName: firstName, lastName: lastName }),
-	        React.createElement(Headline, { editable: editable, headline: headline })
+	        React.createElement(Name, { editable: this.props.editable, firstName: firstName, lastName: lastName }),
+	        React.createElement(Headline, { editable: this.props.editable, headline: headline })
 	      )
 	    );
 	  }
@@ -36707,6 +36662,223 @@
 	});
 	
 	module.exports = EditHeadline;
+
+/***/ },
+/* 312 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var WorkExperience = __webpack_require__(313);
+	var WorkExperienceForm = __webpack_require__(314);
+	
+	var WorkExperiences = React.createClass({
+	  displayName: 'WorkExperiences',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      _create: false
+	    };
+	  },
+	
+	  _create: function () {
+	    this.setState({ _create: true });
+	  },
+	
+	  _close: function () {
+	    this.setState({ _create: false });
+	  },
+	
+	  addWorkExperience: function () {
+	    if (this.state._create) {
+	      return React.createElement(WorkExperienceForm, null);
+	    }
+	  },
+	
+	  render: function () {
+	
+	    var workExperiences = this.props.workExperiences.map(function (we, i) {
+	      React.createElement(WorkExperience, { workExperience: we });
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'header',
+	        null,
+	        React.createElement(
+	          'h2',
+	          null,
+	          'Experience'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this._create },
+	          'Add Position'
+	        )
+	      ),
+	      this.addWorkExperience(),
+	      React.createElement(
+	        'ul',
+	        null,
+	        workExperiences
+	      )
+	    );
+	  },
+	
+	  getDefaultProps: function () {
+	    return {
+	      workExperiences: []
+	    };
+	  }
+	
+	});
+	
+	module.exports = WorkExperiences;
+
+/***/ },
+/* 313 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var WorkExperience = React.createClass({
+	  displayName: 'WorkExperience',
+	
+	
+	  getInitialState: function () {
+	    return {
+	      editing: false
+	    };
+	  },
+	
+	  _edit: function () {
+	    this.setState({ editing: true });
+	  },
+	
+	  _cancel: function () {
+	    this.setState({ editing: false });
+	  },
+	
+	  _editButton: function () {
+	    if (this.props.editable) {
+	      return React.createElement(
+	        'div',
+	        {
+	          className: 'work-experience-edit-button' },
+	        React.createElement('i', { className: 'fa fa-pencil', onClick: this._edit })
+	      );
+	    }
+	  },
+	
+	  render: function () {
+	    if (this.state.editing) {
+	      return React.createElement(WorkExperienceForm, { workExperience: this.props.workExperience });
+	    } else {
+	      return React.createElement(
+	        'li',
+	        { key: i },
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'h4',
+	            null,
+	            workExperience.position
+	          ),
+	          this.editButton()
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'h5',
+	            null,
+	            workExperience.company
+	          ),
+	          this.editButton()
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'span',
+	            null,
+	            React.createElement(
+	              'time',
+	              null,
+	              workExperience.start
+	            ),
+	            '" - "',
+	            React.createElement(
+	              'time',
+	              null,
+	              workExperience.end
+	            )
+	          ),
+	          React.createElement(
+	            'span',
+	            null,
+	            workExperience.location
+	          ),
+	          this.editButton()
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'p',
+	            null,
+	            workExperience.description
+	          ),
+	          this.editButton()
+	        )
+	      );
+	    }
+	  }
+	});
+	
+	module.exports = WorkExperience;
+
+/***/ },
+/* 314 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var WorkExperienceForm = React.createClass({
+	  displayName: 'WorkExperienceForm',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'ul',
+	      null,
+	      React.createElement(
+	        'li',
+	        null,
+	        '1'
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        '2'
+	      ),
+	      React.createElement(
+	        'li',
+	        null,
+	        '3'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = WorkExperienceForm;
 
 /***/ }
 /******/ ]);

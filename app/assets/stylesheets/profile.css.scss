@@ -21,7 +21,6 @@
 }
 
 .profile-card:hover .profile-card-wrapped,
-.profile-card:hover .profile-card-edit-button,
 .profile-card:hover .profile-card-edit-box,
 .profile-card:hover .fa-pencil {
   background-color: #ebebeb;
@@ -61,7 +60,7 @@
   color: inherit;
 }
 
-.profile-card-wrapper:hover .profile-card-edit-button,
+.profile-card-wrapper:hover .profile-card-edit-box,
 .profile-card-wrapper:hover .fa-pencil {
   background-color: #00a0dc;
   color: #fff;
@@ -137,7 +136,7 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   outline: 0;
   position: absolute;
-  top: -5px;
+  top: -8px;
   visibility: visible;
   z-index: 1;
   font-size: 13px;

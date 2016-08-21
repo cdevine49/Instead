@@ -1,14 +1,15 @@
 var React = require('react');
+var SessionStore = require('../stores/session');
 var ProfileUtil = require('../utils/profile');
 var ProfileStore = require('../stores/profile');
 var ProfileCard = require('./profile/profileCard');
+var WorkExperiences = require('./profile/WorkExperiences');
 
 var Profile = React.createClass({
 
   getInitialState: function() {
     return {
-      profile: null,
-      addWorkExperience: false
+      profile: null
     };
   },
 
@@ -25,47 +26,14 @@ var Profile = React.createClass({
     this.setState({ profile: ProfileStore.profile() });
   },
 
-  add: function(type, bool) {
-    switch (type) {
-      case "WorkExperience":
-        this.setState({ addWorkExperience: bool });
-      break;
-    }
-  },
-
-  addWorkExperience: function() {
-    if (this.state.addWorkExperience) {
-      return(
-        <Edit field="WorkExperience" type="create" />
-      );
-    }
-  },
-
   render: function() {
     if (this.state.profile) {
-      var workExperiences = this.state.profile.work_experiences.map(function(we, i) {
-        <WorkExperience key={i} editable={editable}
-          position={we.position}
-          company={we.company}
-          start={we.start}
-          end={we.end}
-          location={we.location}
-          description={we.description}
-          />;
-      });
+      var editable = this.state.profile.user_id === SessionStore.currentUser().id;
+
       return (
         <main className='profile'>
-          <ProfileCard profile={this.state.profile} />
-          <div>
-            <header>
-              <h2>Experience</h2>
-              <button onClick={this.add.bind(this, "WorkExperience", true)}>Add Position</button>
-            </header>
-            {this.addWorkExperience()}
-            <ul>
-              {workExperiences}
-            </ul>
-        </div>
+          <ProfileCard profile={this.state.profile} editable={editable} />
+          <WorkExperiences workExperiences={this.state.profile.workExperiences} editable={editable} />
         </main>
       );
     } else {

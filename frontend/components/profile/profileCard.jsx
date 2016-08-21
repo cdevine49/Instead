@@ -9,7 +9,6 @@ var Headline = require('./headline');
 var ProfileCard = React.createClass({
 
   render: function() {
-    var editable = this.props.profile.user_id === SessionStore.currentUser().id;
     var firstName = this.props.profile.first_name;
     var lastName = this.props.profile.last_name;
     var headline = this.props.profile.headline;
@@ -20,8 +19,8 @@ var ProfileCard = React.createClass({
       <div className='profile-card'>
         <ProfilePic avatar={avatar} />
         <div className='profile-overview'>
-          <Name editable={editable} firstName={firstName} lastName={lastName} />
-          <Headline editable={editable} headline={headline} />
+          <Name editable={this.props.editable} firstName={firstName} lastName={lastName} />
+          <Headline editable={this.props.editable} headline={headline} />
         </div>
       </div>
     );
