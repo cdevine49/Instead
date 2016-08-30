@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var UserConstants = require('../constants/userConstants');
 
-UserActions = {
+export const UserActions = {
 
   emailUnique: function (boolean) {
     var action = {

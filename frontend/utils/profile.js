@@ -1,6 +1,6 @@
 var ProfileActions = require('../actions/profile');
 
-ProfileUtil = {
+export const ProfileUtil = {
 
   fetchProfile: function (id) {
     return new Promise( function(resolve, reject) {

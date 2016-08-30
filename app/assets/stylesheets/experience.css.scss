@@ -1,0 +1,160 @@
+.work-experiences {
+  display: flex;
+  flex-flow: column;
+  padding-top: 35px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.work-experiences-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 35px;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+}
+
+.work-experiences-header h2 {
+  font-size: 26px;
+  font-weight: lighter;
+  color: #afb2b5
+}
+
+.work-experiences-header button {
+}
+
+.work-experience-form {
+  display: flex;
+  flex-flow: column;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 20px;
+  border: 1px 0 solid #e9e9e9;
+  margin: 15px 0 20px;
+  font-size: 13px;
+}
+
+.work-experience-form-item {
+  display: flex;
+  flex-flow: column;
+}
+
+.work-experience-form-item label,
+.work-experience-form-item fieldset legend {
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 17px;
+  margin: 0 6px 0 3px;
+  color: #000
+}
+
+.one-line-input {
+  padding: 5px 6px 4px;
+  margin-top: 2px;
+  border-radius: 2px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1) inset;
+  border: 1px solid #ccc;
+  color: #333;
+  font-family: Helvetica,Arial,sans-serif;
+}
+
+.multiline-input {
+  font-size: 13px;
+  line-height: 17px;
+  color: #333;
+  font-weight: normal;
+  margin-top: 1px;
+  margin-bottom: 15px;
+  padding: 5px 5px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1) inset;
+  border: 1px solid #ccc;
+  max-width: 100%;
+  width: 100%;
+  background: #fdfdfd;
+  font-family: Helvetica,Arial,sans-serif;
+  overflow: auto;
+  vertical-align: top;
+
+}
+
+.year {
+  width: 60px;
+  padding: 5px 6px 4px;
+  margin-top: 2px;
+  border-radius: 2px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1) inset;
+  border: 1px solid #ccc;
+  background: #fdfdfd;
+  color: #333;
+}
+
+.work-experience-item {
+  // margin: 25px 0;
+  padding: 25px 35px;
+}
+
+.work-experience-item:not(:first-child) {
+  border-top: 1px solid #ddd;
+}
+
+.work-experience-text {
+  color: #66696a;
+  font-size: 14px;
+}
+
+.work-experience-position {
+  font-size: 18px;
+  line-height: 22px;
+  color: #434649;
+}
+
+.work-experience-company {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.work-experience-time {
+  padding-right: 0;
+}
+
+.work-experience-location {
+  padding-left: 0;
+}
+
+.work-experience-location:before {
+  padding: 0 6px;
+  content: "|";
+}
+
+.bottom-button {
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-add-button {
+  display: inline;
+  text-align: center;
+  height: 40px;
+  cursor: pointer;
+  background: #eee;
+  font-size: 14px;
+  color: #696c6f;
+  font-weight: bold;
+  line-height: 16px;
+}
+
+.bottom-add-button:hover {
+  color: #0077b5;
+  background-color: #f1f3f5;
+}
+
+.background-actions {
+  display: flex;
+}
+
+.background-actions > .delete {
+  margin: 0;
+}

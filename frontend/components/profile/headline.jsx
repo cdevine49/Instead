@@ -22,8 +22,8 @@ var Headline = React.createClass({
     if (this.props.editable) {
       return (
         <div
-          className='profile-card-edit-button'>
-          <i className='fa fa-pencil' onClick={this.edit}>
+          className='profile-card-edit-button edit-button'>
+          <i className='fa fa-pencil fa-pencil-headline' onClick={this.edit}>
           </i>
         </div>
       );
@@ -43,11 +43,13 @@ var Headline = React.createClass({
 
   render: function() {
     return (
-      <div className='profile-card-headline-wrapper profile-card-wrapper'>
-        <h1 className='profile-card-headline profile-card-wrapped'>{this.props.headline}</h1>
-        <div className='profile-card-edit-box'>
-          {this._editButton()}
-          {this._editForm()}
+      <div className='profile-card-headline-wrapper editable-wrapper'>
+        <div>
+          <h1 className='profile-card-headline editable-wrapped'>{this.props.headline}</h1>
+          <div className='profile-card-edit-box edit-box'>
+            {this._editButton()}
+            {this._editForm()}
+          </div>
         </div>
       </div>
     );

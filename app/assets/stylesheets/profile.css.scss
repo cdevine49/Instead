@@ -18,62 +18,20 @@
 
 .profile-overview {
   padding: 0 20px;
-}
-
-.profile-card:hover .profile-card-wrapped,
-.profile-card:hover .profile-card-edit-box,
-.profile-card:hover .fa-pencil {
-  background-color: #ebebeb;
-  visibility: visible;
-}
-
-.profile-card-wrapper {
   display: flex;
-  align-items: stretch;
-  margin-bottom: 4px;
+  flex-flow: column;
 }
 
-.profile-card-wrapped, .profile-card-edit-button, .fa-pencil {
-  transition: background-color 0.2s color 0.2s;
-}
-
-.profile-card-wrapped, .profile-card-edit-box {
-  background-origin: padding-box;
-  vertical-align: middle;
-  padding: 2px 5px;
-}
-
-.profile-card-name-wrapper .fa-pencil {
+.fa-pencil-name {
   font-size: 20px;
 }
 
-.profile-card-headline-wrapper .fa-pencil {
+.fa-pencil-headline {
   font-size: 16px;
-}
-
-.profile-card-wrapper:hover .profile-card-wrapped {
-  background-color: #caecfc;
-  color: #00a0dc;
 }
 
 .profile-card-name-wrapper:hover .profile-card-name {
   color: inherit;
-}
-
-.profile-card-wrapper:hover .profile-card-edit-box,
-.profile-card-wrapper:hover .fa-pencil {
-  background-color: #00a0dc;
-  color: #fff;
-}
-
-.fa-pencil {
-  text-align: justify;
-  color: #505e69;
-  visibility: hidden;
-}
-
-.fa-pencil:hover {
-  color: #fff;
 }
 
 .profile-card-name {
@@ -146,18 +104,6 @@
   vertical-align: baseline;
 }
 
-.profile-card-edit-box {
-  position: relative;
-  margin-left: 4px;
-}
-
-.profile-card-edit-button {
-  cursor: pointer;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
 .profile-card-edit-form-pointer {
   text-indent: -119988px;
   overflow: hidden;
@@ -188,4 +134,35 @@
   border-width: 12px 12px 12px 0;
   border-color: transparent #fff transparent transparent;
   overflow: visible;
+}
+
+.profile-card-edit-legend {
+  font-size: 12px;
+  line-height: 14px;
+  color: #66696a;
+  font-weight: bold;
+  margin: 0 6px 3px 0;
+}
+
+.name-edit-input {
+  display: inline-block;
+  width: 105px;
+  margin-top: 6px;
+  padding: 5px 6px 4px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1) inset;
+  border: 1px solid #ccc;
+  background: #fdfdfd;
+  color: #333;
+  font-family: Helvetica,Arial,sans-serif;
+}
+
+.first-name-edit-input {
+  margin-right: 6px;
+}
+
+.profile-card-edit-buttons {
+  padding-top: 10px;
+  margin-top: 2px;
 }

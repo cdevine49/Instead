@@ -11,5 +11,7 @@ Rails.application.routes.draw do
     resources :photos do
       post 'upload_avatar', on: :collection
     end
+    resources :work_experiences
+    resources :educations
   end
 end

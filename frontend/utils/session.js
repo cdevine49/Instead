@@ -1,6 +1,6 @@
 var SessionActions = require('../actions/session');
 
-SessionUtil = {
+export const SessionUtil = {
 
   signIn: function (credentials) {
     return new Promise( function(resolve, reject) {

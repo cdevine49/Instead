@@ -1,6 +1,6 @@
 var CropperActions = require('../actions/cropper');
 
-CropperUtil = {
+export const CropperUtil = {
 
   createTempProfilePic: function (data) {
     return new Promise( function(resolve, reject) {

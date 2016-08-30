@@ -1,5 +1,5 @@
-JobConstants = {
-  
+export const JobConstants = {
+
   // Change above
 };
 

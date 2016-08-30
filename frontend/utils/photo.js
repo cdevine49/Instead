@@ -1,6 +1,6 @@
 var PhotoActions = require('../actions/profile');
 
-PhotoUtil = {
+export const PhotoUtil = {
 
   fetchPhoto: function (id) {
     return new Promise( function(resolve, reject) {

@@ -92,7 +92,7 @@ var Cropper = React.createClass({
               <h4>Adjust Photo</h4>
               <p>
                 Drag the {this.props.cropSquareColor} rectangle to change position and size. &nbsp;
-                <label for='file-upload' class='cropper-file-upload'>Change Photo.
+                <label htmlFor='file-upload' className='cropper-file-upload'>Change Photo.
                   <input
                     type="file"
                     id='file-upload'
@@ -171,10 +171,10 @@ var Cropper = React.createClass({
             <input
               type="submit"
               value="Save"
-              className='cropper-submit'
+              className='submit cropper-submit'
               />
-            <button className='cropper-cancel'>Cancel</button>
-            <button className='cropper-delete'>Delete Photo</button>
+            <button type="button" className='cancel cropper-cancel' onClick={this.props.close}>Cancel</button>
+            <button type="button" className='delete cropper-delete'>Delete Photo</button>
           </div>
 
         </form>

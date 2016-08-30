@@ -1,7 +1,7 @@
 var UserActions = require('../actions/user');
 var SessionActions = require('../actions/session');
 
-UserUtil = {
+export const UserUtil = {
 
   signUp: function (credentials) {
     return new Promise( function(resolve, reject) {

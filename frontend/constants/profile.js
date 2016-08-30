@@ -1,4 +1,4 @@
-ProfileConstants = {
+export const ProfileConstants = {
   RECEIVE_PROFILE: 'RECEIVE_PROFILE'
 };
 

@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var CropperConstants = require('../constants/cropper');
 
-CropperActions = {
+export const CropperActions = {
 
   receiveTempAvatarURL: function (url) {
     var action = {

@@ -11,10 +11,12 @@ var Name = React.createClass({
   },
 
   edit: function() {
+    console.log(true);
     this.setState({ editing: true });
   },
 
   closeEdit: function() {
+    console.log(false);
     this.setState({ editing: false });
   },
 
@@ -22,8 +24,8 @@ var Name = React.createClass({
     if (this.props.editable) {
       return (
         <div
-          className='profile-card-edit-button'>
-          <i className='fa fa-pencil' onClick={this.edit}>
+          className='profile-card-edit-button edit-button'>
+          <i className='fa fa-pencil fa-pencil-name'>
           </i>
         </div>
       );
@@ -44,11 +46,13 @@ var Name = React.createClass({
 
   render: function() {
     return (
-      <div className='profile-card-name-wrapper profile-card-wrapper'>
-        <h1 className='profile-card-name profile-card-wrapped'>{this.props.firstName + " " + this.props.lastName}</h1>
-        <div className='profile-card-edit-box'>
-          {this._editButton()}
-          {this._editForm()}
+      <div className='profile-card-name-wrapper editable-wrapper'>
+        <div>
+          <h1 className='profile-card-name editable-wrapped'>{this.props.firstName + " " + this.props.lastName}</h1>
+          <div className='profile-card-edit-box edit-box' onClick={this.edit}>
+            {this._editButton()}
+            {this._editForm()}
+          </div>
         </div>
       </div>
     );

@@ -5,7 +5,9 @@ var EditName = React.createClass({
 
   render: function() {
     return (
-      <div className='profile-card-edit-name'>
+      <fieldset className='profile-card-edit-name'>
+        <legend className='profile-card-edit-legend'>Name</legend>
+
         <label htmlFor="first_name"></label>
         <input
           type="text"
@@ -13,7 +15,7 @@ var EditName = React.createClass({
           name='user_profile[first_name]'
           defaultValue={this.props.firstName}
           placeholder="First"
-          className=""
+          className="name-edit-input first-name-edit-input"
         />
 
         <label htmlFor="last_name"></label>
@@ -23,10 +25,10 @@ var EditName = React.createClass({
           name='user_profile[last_name]'
           defaultValue={this.props.lastName}
           placeholder="Last"
-          className=""
+          className="name-edit-input"
         />
 
-      </div>
+    </fieldset>
     );
   }
 

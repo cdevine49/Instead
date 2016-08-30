@@ -16,7 +16,7 @@ var ProfileCard = React.createClass({
     var avatar = this.props.profile.avatar;
 
     return (
-      <div className='profile-card'>
+      <div className='profile-card editable-container'>
         <ProfilePic avatar={avatar} />
         <div className='profile-overview'>
           <Name editable={this.props.editable} firstName={firstName} lastName={lastName} />

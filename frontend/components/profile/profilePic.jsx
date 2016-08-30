@@ -106,6 +106,7 @@ var ProfilePic = React.createClass({
             imageURL={this.state.cropperURL}
             crop={this._handleUpload}
             uploadImage={this._tempAvatarUpload}
+            close={this.closeModal}
             />
         </Modal>
       </div>

@@ -155,35 +155,6 @@
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.cropper-submit {
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 3px;
-
-  margin-right: 5px;
-  padding: 0 13px;
-  height: 31px;
-  width: auto;
-
-  box-sizing: border-box;
-  background-color: #287bbc;
-  border-color: #1b5480;
-
-  font-size: 13px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.35);
-  line-height: 29px;
-  cursor: pointer;
-}
-
-.cropper-submit:disabled {
-  background-color: #2672ae;
-  background-image: linear-gradient(top, #2672ae 0%,#1e4f7e 100%);
-  opacity: 0.6;
-  cursor: default;
-}
-
 .cropper-delete {
   margin-left: auto;
 }

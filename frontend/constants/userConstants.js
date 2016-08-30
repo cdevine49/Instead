@@ -1,4 +1,4 @@
-UserConstants = {
+export const UserConstants = {
   EMAIL_UNIQUE: 'EMAIL_UNIQUE'
 };
 

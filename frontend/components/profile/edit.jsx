@@ -25,7 +25,10 @@ var Edit = React.createClass({
   },
 
   _toggle: function(e) {
-    if (e) { e.preventDefault(); }
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     this.props.close();
   },
 
@@ -41,8 +44,10 @@ var Edit = React.createClass({
       <form className='profile-card-edit-form' ref="form" onSubmit={this._handleSubmit} >
         <strong className='profile-card-edit-form-pointer'></strong>
         {this._editing()}
-        <button type="submit">Save</button>
-        <button onClick={this._toggle}>Cancel</button>
+        <div className='profile-card-edit-buttons'>
+          <button className='submit' type="submit">Save</button>
+          <button type='button' className='cancel' onClick={this._toggle}>Cancel</button>
+        </div>
       </form>
     );
   },

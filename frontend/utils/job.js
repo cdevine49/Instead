@@ -1,6 +1,6 @@
 var JobActions = require('../actions/job');
 
-JobUtil = {
+export const JobUtil = {
 
 
 

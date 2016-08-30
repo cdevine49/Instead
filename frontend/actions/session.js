@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var SessionConstants = require('../constants/session');
 
-SessionActions = {
+export const SessionActions = {
 
   currentUser: function (currentUser) {
     var action = {

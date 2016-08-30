@@ -3,7 +3,7 @@ var SessionStore = require('../stores/session');
 var ProfileUtil = require('../utils/profile');
 var ProfileStore = require('../stores/profile');
 var ProfileCard = require('./profile/profileCard');
-var WorkExperiences = require('./profile/WorkExperiences');
+import Background from './profile/Background';
 
 var Profile = React.createClass({
 
@@ -33,7 +33,7 @@ var Profile = React.createClass({
       return (
         <main className='profile'>
           <ProfileCard profile={this.state.profile} editable={editable} />
-          <WorkExperiences workExperiences={this.state.profile.workExperiences} editable={editable} />
+          <Background profile ={this.state.profile} editable={editable} />
         </main>
       );
     } else {

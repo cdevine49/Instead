@@ -1,0 +1,63 @@
+.editable-container:hover .editable-wrapped,
+.editable-container:hover .edit-box,
+.editable-container:hover .fa-pencil {
+  background-color: #ebebeb;
+  visibility: visible;
+}
+
+.editable-wrapper {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 4px;
+}
+
+.editable-wrapper > div {
+  display: flex;
+}
+
+.edit-box {
+  position: relative;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.edit-button {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.editable-wrapped, .edit-button, .fa-pencil {
+  transition: background-color 0.2s color 0.2s;
+}
+
+.editable-wrapped, .edit-box {
+  background-origin: padding-box;
+  vertical-align: middle;
+  padding: 2px 5px;
+}
+
+.editable-wrapper > div:hover .editable-wrapped {
+  background-color: #caecfc;
+  color: #00a0dc;
+}
+
+.editable-wrapper > div:hover .edit-box,
+.editable-wrapper > div:hover .fa-pencil {
+  background-color: #00a0dc;
+  color: #fff;
+}
+
+.fa-pencil {
+  text-align: justify;
+  color: #505e69;
+  visibility: hidden;
+}
+
+.fa-pencil:hover {
+  color: #fff;
+}
+
+.editing-section {
+  margin: 10px 0;
+}

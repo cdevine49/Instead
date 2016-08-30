@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var ProfileConstants = require('../constants/profile');
 
-ProfileActions = {
+export const ProfileActions = {
 
   receiveProfile: function (profile) {
     var action = {
