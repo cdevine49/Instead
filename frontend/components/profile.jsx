@@ -33,7 +33,7 @@ var Profile = React.createClass({
       return (
         <main className='profile'>
           <ProfileCard profile={this.state.profile} editable={editable} />
-          <Background profile ={this.state.profile} editable={editable} />
+          <Background id ={this.state.profile.id} editable={editable} />
         </main>
       );
     } else {

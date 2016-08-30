@@ -4,6 +4,7 @@ var JobStore = new Store(AppDispatcher);
 
 var JobConstants = require('../constants/job');
 
+var _currentUser, _currentUserFetched;
 
 JobStore.__onDispatch = function (payload) {
   switch (payload.actionType) {

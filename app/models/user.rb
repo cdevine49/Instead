@@ -1,5 +1,7 @@
 class User < ActiveRecord::Base
   has_one :profile, class_name: 'UserProfile'
+  has_many :educations, through: :profile
+  has_many :work_experiences, through: :profile
   include Photoable
   # build_profile not profile.new
 

@@ -36715,6 +36715,8 @@
 	
 	var JobConstants = __webpack_require__(295);
 	
+	var _currentUser, _currentUserFetched;
+	
 	JobStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case JobConstants.CURRENT_USER:
@@ -36796,7 +36798,7 @@
 	        'main',
 	        { className: 'profile' },
 	        React.createElement(ProfileCard, { profile: this.state.profile, editable: editable }),
-	        React.createElement(_Background2.default, { profile: this.state.profile, editable: editable })
+	        React.createElement(_Background2.default, { id: this.state.profile.id, editable: editable })
 	      );
 	    } else {
 	      return React.createElement(
@@ -36816,14 +36818,16 @@
 /* 298 */,
 /* 299 */,
 /* 300 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	// import WorkActions from '../actions/work';
+	exports.destroyExperience = exports.editExperience = exports.fetchExperiences = exports.createExperience = undefined;
+	
+	var _work = __webpack_require__(330);
 	
 	var createExperience = exports.createExperience = function createExperience(data) {
 	  return new Promise(function (resolve, reject) {
@@ -36834,6 +36838,23 @@
 	      data: data,
 	      success: function success(experience) {
 	        // WorkActions.receiveExperience(experience);
+	        resolve();
+	      },
+	      error: function error(response) {
+	        reject(response);
+	      }
+	    });
+	  });
+	};
+	
+	var fetchExperiences = exports.fetchExperiences = function fetchExperiences(id) {
+	  return new Promise(function (resolve, reject) {
+	    $.ajax({
+	      type: "GET",
+	      url: "/api/work_experiences/",
+	      dataType: "json",
+	      success: function success(experience) {
+	        (0, _work.receiveExperiences)(experience);
 	        resolve();
 	      },
 	      error: function error(response) {
@@ -38129,11 +38150,11 @@
 	  _createClass(Background, [{
 	    key: 'render',
 	    value: function render() {
+	      // <Education id={this.props.id} editable={this.props.editable} />
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'background' },
-	        _react2.default.createElement(_workExperiences2.default, { workExperiences: this.props.profile.work_experiences, editable: this.props.editable }),
-	        _react2.default.createElement(_education2.default, { schools: this.props.profile.schools, editable: this.props.editable })
+	        _react2.default.createElement(_workExperiences2.default, { id: this.props.id, editable: this.props.editable })
 	      );
 	    }
 	  }]);
@@ -38160,9 +38181,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _workExperience = __webpack_require__(324);
+	var _workExperience = __webpack_require__(300);
 	
-	var _workExperience2 = _interopRequireDefault(_workExperience);
+	var _work = __webpack_require__(331);
+	
+	var _workExperience2 = __webpack_require__(324);
+	
+	var _workExperience3 = _interopRequireDefault(_workExperience2);
 	
 	var _workExperienceForm = __webpack_require__(325);
 	
@@ -38184,11 +38209,32 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(WorkExperiences).call(this, props));
 	
-	    _this.state = { _create: false };
+	    _this.state = {
+	      workExperiences: [],
+	      _create: false
+	    };
+	
+	    _this._onChange = _this._onChange.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(WorkExperiences, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      (0, _workExperience.fetchExperiences)(this.props.id);
+	      this.experienceStoreToken = _work.WorkStore.addListener(this._onChange);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.experienceStoreToken.remove();
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange() {
+	      this.setState({ workExperiences: _work.WorkStore.all() });
+	    }
+	  }, {
 	    key: '_create',
 	    value: function _create() {
 	      this.setState({ _create: true });
@@ -38210,8 +38256,8 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var workExperiences = this.props.workExperiences.map(function (we, index) {
-	        return _react2.default.createElement(_workExperience2.default, { key: index, workExperience: we, editable: this.props.editable });
+	      var workExperiences = this.state.workExperiences.map(function (we, index) {
+	        return _react2.default.createElement(_workExperience3.default, { key: index, workExperience: we, editable: this.props.editable });
 	      }.bind(this));
 	
 	      return _react2.default.createElement(
@@ -39373,6 +39419,74 @@
 	      }
 	    });
 	  });
+	};
+
+/***/ },
+/* 330 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var AppDispatcher = __webpack_require__(260);
+	var WorkConstants = __webpack_require__(332);
+	
+	var receiveExperiences = exports.receiveExperiences = function receiveExperiences(experiences) {
+	  var action = {
+	    actionType: WorkConstants.WORK_EXPERIENCES,
+	    experiences: experiences
+	  };
+	
+	  AppDispatcher.dispatch(action);
+	};
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var Store = __webpack_require__(267).Store;
+	var AppDispatcher = __webpack_require__(260);
+	var WorkStore = exports.WorkStore = new Store(AppDispatcher);
+	
+	var WorkConstants = __webpack_require__(332);
+	
+	var _workExperiences = [];
+	
+	WorkStore.all = function () {
+	  return _workExperiences;
+	};
+	
+	WorkStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case WorkConstants.EMAIL_UNIQUE:
+	      receiveExperiences(payload.experiences);
+	      WorkStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	var receiveExperiences = function receiveExperiences(experiences) {
+	  _workExperiences = experiences.work_experiences;
+	};
+
+/***/ },
+/* 332 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var WorkConstants = exports.WorkConstants = {
+	  WORK_EXPERIENCES: 'WORK_EXPERIENCES'
 	};
 
 /***/ }

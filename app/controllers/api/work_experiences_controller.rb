@@ -1,4 +1,10 @@
 class Api::WorkExperiencesController < ApplicationController
+
+
+  def index
+    @work_experiences = current_user.work_experiences
+  end
+
   def create
     debugger
     @work_experience = current_user.profile.work_experiences.build(work_experience_params)

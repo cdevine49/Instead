@@ -1,4 +1,6 @@
 import React from 'react';
+import { fetchExperiences } from '../../../utils/workExperience';
+import { WorkStore } from '../../../stores/work';
 import WorkExperience from './workExperience';
 import WorkExperienceForm from './workExperienceForm';
 
@@ -6,7 +8,25 @@ export default class WorkExperiences extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { _create: false };
+    this.state = {
+      workExperiences: [],
+      _create: false
+    };
+
+    this._onChange = this._onChange.bind(this);
+  }
+
+  componentDidMount() {
+    fetchExperiences(this.props.id);
+    this.experienceStoreToken = WorkStore.addListener(this._onChange);
+  }
+
+  componentWillUnmount() {
+    this.experienceStoreToken.remove();
+  }
+
+  _onChange() {
+    this.setState({ workExperiences: WorkStore.all() });
   }
 
   _create() {
@@ -20,9 +40,9 @@ export default class WorkExperiences extends React.Component {
   addWorkExperience() {
     if (this.state._create) { return ( <WorkExperienceForm close={this._close.bind(this)} /> ); }
   }
-
   render() {
-    var workExperiences = this.props.workExperiences.map(function(we, index) {
+
+    var workExperiences = this.state.workExperiences.map(function(we, index) {
       return (
         <WorkExperience key={index} workExperience={we} editable={this.props.editable} />
       );

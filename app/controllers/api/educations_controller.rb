@@ -1,6 +1,9 @@
 class Api::EducationsController < ApplicationController
   before_action :find_by_id, only: [:update, :destroy]
 
+  def index
+    @educations = current_user.educations
+  end
 
   def create
     @education = current_user.profile.educations.build(education_params)
