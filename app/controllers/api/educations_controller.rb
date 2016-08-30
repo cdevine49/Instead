@@ -2,7 +2,7 @@ class Api::EducationsController < ApplicationController
   before_action :find_by_id, only: [:update, :destroy]
 
   def index
-    @educations = current_user.educations
+    @educations = User.find(params[:user_id]).educations
   end
 
   def create
@@ -15,8 +15,6 @@ class Api::EducationsController < ApplicationController
   end
 
   def update
-    # @education = Education.find(params[:id])
-    debugger
     if @education.update(education_params)
       render :show
     else
@@ -26,9 +24,8 @@ class Api::EducationsController < ApplicationController
   end
 
   def destroy
-    # @education = Education.find(params[:id])
     @education.destroy
-    render json: {}, status: 204
+    render :show
   end
 
   private

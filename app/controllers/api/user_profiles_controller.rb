@@ -10,7 +10,7 @@ class Api::UserProfilesController < ApplicationController
   end
 
   def show
-    @profile = UserProfile.find_by(user_id: params[:id])
+    @profile = UserProfile.find_by(user_id: params[:user_id])
     render :show
   end
 

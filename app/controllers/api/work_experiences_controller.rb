@@ -2,7 +2,7 @@ class Api::WorkExperiencesController < ApplicationController
 
 
   def index
-    @work_experiences = current_user.work_experiences
+    @work_experiences = User.find(params[:user_id]).work_experiences
   end
 
   def create

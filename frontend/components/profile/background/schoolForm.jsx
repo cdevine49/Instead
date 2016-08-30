@@ -180,7 +180,7 @@ export default class SchoolForm extends React.Component{
             </label>
             <textarea
               id="description"
-              row="6"
+              rows="6"
               cols="60"
               value={ this.state.description }
               onChange={ this.handleChange }
@@ -188,9 +188,11 @@ export default class SchoolForm extends React.Component{
               className="multiline-input" />
           </li>
         </ul>
-        <button type="submit">Save</button>
-        <button type="button" onClick={this.props.close}>Cancel</button>
-        <button type="button" onClick={this.destroy}>Remove this Position</button>
+        <div className='background-actions'>
+          <button type="submit">Save</button>
+          <button type="button" onClick={this.props.close}>Cancel</button>
+          <button type="button" onClick={this.destroy}>Remove this Position</button>
+        </div>
       </form>
     );
   }

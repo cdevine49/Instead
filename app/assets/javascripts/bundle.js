@@ -36847,12 +36847,13 @@
 	  });
 	};
 	
-	var fetchExperiences = exports.fetchExperiences = function fetchExperiences(id) {
+	var fetchExperiences = exports.fetchExperiences = function fetchExperiences(user_id) {
 	  return new Promise(function (resolve, reject) {
 	    $.ajax({
 	      type: "GET",
 	      url: "/api/work_experiences/",
 	      dataType: "json",
+	      data: { user_id: user_id },
 	      success: function success(experience) {
 	        (0, _work.receiveExperiences)(experience);
 	        resolve();
@@ -36913,13 +36914,13 @@
 	
 	var ProfileUtil = exports.ProfileUtil = {
 	
-	  fetchProfile: function fetchProfile(id) {
+	  fetchProfile: function fetchProfile(user_id) {
 	    return new Promise(function (resolve, reject) {
 	      $.ajax({
 	        type: "GET",
 	        url: "/api/user_profile/",
 	        dataType: "json",
-	        data: { id: id },
+	        data: { user_id: user_id },
 	        success: function success(profile) {
 	          ProfileActions.receiveProfile(profile);
 	          resolve();
@@ -38150,11 +38151,11 @@
 	  _createClass(Background, [{
 	    key: 'render',
 	    value: function render() {
-	      // <Education id={this.props.id} editable={this.props.editable} />
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'background' },
-	        _react2.default.createElement(_workExperiences2.default, { id: this.props.id, editable: this.props.editable })
+	        _react2.default.createElement(_workExperiences2.default, { id: this.props.id, editable: this.props.editable }),
+	        _react2.default.createElement(_education2.default, { id: this.props.id, editable: this.props.editable })
 	      );
 	    }
 	  }]);
@@ -38774,6 +38775,10 @@
 	
 	var _school2 = _interopRequireDefault(_school);
 	
+	var _school3 = __webpack_require__(329);
+	
+	var _education = __webpack_require__(333);
+	
 	var _schoolForm = __webpack_require__(328);
 	
 	var _schoolForm2 = _interopRequireDefault(_schoolForm);
@@ -38794,11 +38799,32 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Education).call(this, props));
 	
-	    _this.state = { _create: false };
+	    _this.state = {
+	      education: [],
+	      _create: false
+	    };
+	
+	    _this._onChange = _this._onChange.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(Education, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      (0, _school3.fetchEducation)(this.props.id);
+	      this.educationStoreToken = _education.EducationStore.addListener(this._onChange);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.educationStoreToken.remove();
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange() {
+	      this.setState({ education: _education.EducationStore.all() });
+	    }
+	  }, {
 	    key: '_create',
 	    value: function _create() {
 	      this.setState({ _create: true });
@@ -38820,7 +38846,7 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var schools = this.props.schools.map(function (school, index) {
+	      var schools = this.state.education.map(function (school, index) {
 	        return _react2.default.createElement(_school2.default, { key: index, school: school, editable: this.props.editable });
 	      }.bind(this));
 	
@@ -38943,8 +38969,14 @@
 	      var monthsHelper = { 1: "January", 2: "February", 3: "March", 4: "April", 5: "May",
 	        6: "June", 7: "July", 8: "August", 9: "September",
 	        10: "October", 11: "November", 12: "December" };
+	
+	      var dfg = [];
+	      [school.degree, school.field, school.grade].forEach(function (el) {
+	        if (el) dfg.push(el);
+	      });
+	
 	      if (this.state.editing) {
-	        return _react2.default.createElement(_schoolForm2.default, { workExperience: school, close: this._cancel });
+	        return _react2.default.createElement(_schoolForm2.default, { school: school, close: this._cancel });
 	      } else {
 	        return _react2.default.createElement(
 	          'li',
@@ -38972,13 +39004,7 @@
 	              _react2.default.createElement(
 	                'h5',
 	                { className: 'editable-wrapped work-experience-text work-experience-company' },
-	                '[',
-	                school.degree,
-	                ', ',
-	                school.field,
-	                ', ',
-	                school.grade,
-	                '].join(\', \')'
+	                dfg.join(', ')
 	              ),
 	              this._editButton()
 	            )
@@ -39324,7 +39350,7 @@
 	            ),
 	            _react2.default.createElement('textarea', {
 	              id: 'description',
-	              row: '6',
+	              rows: '6',
 	              cols: '60',
 	              value: this.state.description,
 	              onChange: this.handleChange,
@@ -39333,19 +39359,23 @@
 	          )
 	        ),
 	        _react2.default.createElement(
-	          'button',
-	          { type: 'submit' },
-	          'Save'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { type: 'button', onClick: this.props.close },
-	          'Cancel'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { type: 'button', onClick: this.destroy },
-	          'Remove this Position'
+	          'div',
+	          { className: 'background-actions' },
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Save'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'button', onClick: this.props.close },
+	            'Cancel'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'button', onClick: this.destroy },
+	            'Remove this Position'
+	          )
 	        )
 	      );
 	    }
@@ -39361,13 +39391,17 @@
 
 /***/ },
 /* 329 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.destroySchool = exports.editSchool = exports.fetchEducation = exports.createSchool = undefined;
+	
+	var _education = __webpack_require__(335);
+	
 	var createSchool = exports.createSchool = function createSchool(data) {
 	  return new Promise(function (resolve, reject) {
 	    $.ajax({
@@ -39377,6 +39411,24 @@
 	      data: data,
 	      success: function success(education) {
 	        // WorkActions.receiveSchool(education);
+	        resolve();
+	      },
+	      error: function error(response) {
+	        reject(response);
+	      }
+	    });
+	  });
+	};
+	
+	var fetchEducation = exports.fetchEducation = function fetchEducation(user_id) {
+	  return new Promise(function (resolve, reject) {
+	    $.ajax({
+	      type: "GET",
+	      url: "/api/educations/",
+	      dataType: "json",
+	      data: { user_id: user_id },
+	      success: function success(education) {
+	        (0, _education.receiveEducation)(education);
 	        resolve();
 	      },
 	      error: function error(response) {
@@ -39410,8 +39462,8 @@
 	      type: "DELETE",
 	      url: "/api/educations/" + id,
 	      dataType: "json",
-	      success: function success(education) {
-	        // WorkActions.receiveSchool(education);
+	      success: function success(school) {
+	        (0, _education.removeSchool)(school);
 	        resolve();
 	      },
 	      error: function error(response) {
@@ -39499,6 +39551,135 @@
 	});
 	exports.default = {
 	  WORK_EXPERIENCES: 'WORK_EXPERIENCES'
+	};
+
+/***/ },
+/* 333 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.EducationStore = undefined;
+	
+	var _education2 = __webpack_require__(334);
+	
+	var _education3 = _interopRequireDefault(_education2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Store = __webpack_require__(267).Store;
+	var AppDispatcher = __webpack_require__(260);
+	var EducationStore = exports.EducationStore = new Store(AppDispatcher);
+	
+	var _education = [];
+	
+	EducationStore.all = function () {
+	  return _education;
+	};
+	
+	EducationStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case _education3.default.RECEIVE_EDUCATION:
+	      receiveEducation(payload.education);
+	      break;
+	    case _education3.default.RECEIVE_SCHOOL:
+	      addSchool(payload.school);
+	      break;
+	    case _education3.default.UPDATE_SCHOOL:
+	      updateSchool(payload.school);
+	      break;
+	    case _education3.default.DESTROY_SCHOOL:
+	      removeSchool(payload.school);
+	      break;
+	  }
+	};
+	
+	var addSchool = function addSchool(school) {
+	
+	  EducationStore.__emitChange();
+	};
+	
+	var receiveEducation = function receiveEducation(education) {
+	  _education = education.educations;
+	  EducationStore.__emitChange();
+	};
+	
+	var removeSchool = function removeSchool(school) {
+	  var i = schoolIndex(school);
+	  if (i) _education.splice(i, 1);
+	  EducationStore.__emitChange();
+	};
+	
+	var updateSchool = function updateSchool(school) {
+	  for (var i = 0; i < _education.length; i++) {
+	    if (school.id === _education[i].id) {
+	      _education[i] = school;
+	    }
+	  }
+	  EducationStore.__emitChange();
+	};
+	
+	var schoolIndex = function schoolIndex(school) {
+	  for (var i = 0; i < _education.length; i++) {
+	    if (_education[i].id === school.id) {
+	      return i;
+	    }
+	  }
+	};
+
+/***/ },
+/* 334 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  RECEIVE_EDUCATION: 'RECEIVE_EDUCATION',
+	  RECEIVE_SCHOOL: 'RECEIVE_SCHOOL',
+	  UPDATE_SCHOOL: 'UPDATE_SCHOOL',
+	  DESTROY_SCHOOL: 'DESTROY_SCHOOL'
+	};
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.removeSchool = exports.receiveEducation = undefined;
+	
+	var _education = __webpack_require__(334);
+	
+	var _education2 = _interopRequireDefault(_education);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AppDispatcher = __webpack_require__(260);
+	var receiveEducation = exports.receiveEducation = function receiveEducation(education) {
+	  var action = {
+	    actionType: _education2.default.RECEIVE_EDUCATION,
+	    education: education
+	  };
+	
+	  AppDispatcher.dispatch(action);
+	};
+	
+	var removeSchool = exports.removeSchool = function removeSchool(school) {
+	  var action = {
+	    actionType: _education2.default.DESTROY_SCHOOL,
+	    school: school
+	  };
+	
+	  AppDispatcher.dispatch(action);
 	};
 
 /***/ }

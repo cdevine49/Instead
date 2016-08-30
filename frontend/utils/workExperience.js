@@ -18,12 +18,13 @@ export const createExperience = data => {
   });
 };
 
-export const fetchExperiences = id => {
+export const fetchExperiences = user_id => {
   return new Promise( function(resolve, reject) {
     $.ajax({
       type: "GET",
       url: "/api/work_experiences/",
       dataType: "json",
+      data: {user_id: user_id},
       success: function (experience) {
         receiveExperiences(experience);
         resolve();

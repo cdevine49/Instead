@@ -1,12 +1,32 @@
 import React from 'react';
 import School from './school';
+import { fetchEducation } from '../../../utils/school';
+import { EducationStore } from '../../../stores/education';
 import SchoolForm from './schoolForm';
 
 export default class Education extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { _create: false };
+    this.state = {
+      education: [],
+      _create: false
+    };
+
+    this._onChange = this._onChange.bind(this);
+  }
+
+  componentDidMount() {
+    fetchEducation(this.props.id);
+    this.educationStoreToken = EducationStore.addListener(this._onChange);
+  }
+
+  componentWillUnmount() {
+    this.educationStoreToken.remove();
+  }
+
+  _onChange() {
+    this.setState({ education: EducationStore.all() });
   }
 
   _create() {
@@ -22,7 +42,7 @@ export default class Education extends React.Component {
   }
 
   render() {
-    var schools = this.props.schools.map(function(school, index) {
+    var schools = this.state.education.map(function(school, index) {
       return (
         <School key={index} school={school} editable={this.props.editable} />
       );

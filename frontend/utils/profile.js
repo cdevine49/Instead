@@ -2,13 +2,13 @@ var ProfileActions = require('../actions/profile');
 
 export const ProfileUtil = {
 
-  fetchProfile: function (id) {
+  fetchProfile: function (user_id) {
     return new Promise( function(resolve, reject) {
       $.ajax({
         type: "GET",
         url: "/api/user_profile/",
         dataType: "json",
-        data: {id: id},
+        data: {user_id: user_id},
         success: function (profile) {
           ProfileActions.receiveProfile(profile);
           resolve();

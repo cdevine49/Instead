@@ -40,9 +40,15 @@ export default class School extends React.Component {
     const monthsHelper = {1: "January", 2: "February", 3: "March", 4: "April", 5: "May",
                           6: "June", 7: "July", 8: "August", 9: "September",
                           10: "October", 11: "November", 12: "December"};
+
+    var dfg = [];
+    [school.degree, school.field, school.grade].forEach((el) => {
+      if (el) dfg.push(el);
+    });
+
     if (this.state.editing) {
       return (
-        <SchoolForm workExperience={school} close={this._cancel} />
+        <SchoolForm school={school} close={this._cancel} />
       );
     } else {
       return (
@@ -55,7 +61,7 @@ export default class School extends React.Component {
           </div>
           <div className="editable-wrapper">
             <div>
-              <h5 className='editable-wrapped work-experience-text work-experience-company'>[{school.degree}, {school.field}, {school.grade}].join(', ')</h5>
+              <h5 className='editable-wrapped work-experience-text work-experience-company'>{dfg.join(', ')}</h5>
               {this._editButton()}
             </div>
           </div>
