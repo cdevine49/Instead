@@ -39430,12 +39430,18 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var AppDispatcher = __webpack_require__(260);
-	var WorkConstants = __webpack_require__(332);
+	exports.receiveExperiences = undefined;
 	
+	var _work = __webpack_require__(332);
+	
+	var _work2 = _interopRequireDefault(_work);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AppDispatcher = __webpack_require__(260);
 	var receiveExperiences = exports.receiveExperiences = function receiveExperiences(experiences) {
 	  var action = {
-	    actionType: WorkConstants.WORK_EXPERIENCES,
+	    actionType: _work2.default.WORK_EXPERIENCES,
 	    experiences: experiences
 	  };
 	
@@ -39451,11 +39457,17 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.WorkStore = undefined;
+	
+	var _work = __webpack_require__(332);
+	
+	var _work2 = _interopRequireDefault(_work);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var Store = __webpack_require__(267).Store;
 	var AppDispatcher = __webpack_require__(260);
 	var WorkStore = exports.WorkStore = new Store(AppDispatcher);
-	
-	var WorkConstants = __webpack_require__(332);
 	
 	var _workExperiences = [];
 	
@@ -39465,7 +39477,7 @@
 	
 	WorkStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
-	    case WorkConstants.EMAIL_UNIQUE:
+	    case _work2.default.WORK_EXPERIENCES:
 	      receiveExperiences(payload.experiences);
 	      WorkStore.__emitChange();
 	      break;
@@ -39485,7 +39497,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var WorkConstants = exports.WorkConstants = {
+	exports.default = {
 	  WORK_EXPERIENCES: 'WORK_EXPERIENCES'
 	};
 

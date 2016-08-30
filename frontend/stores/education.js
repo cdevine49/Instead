@@ -1,20 +1,20 @@
 const Store = require('flux/utils').Store;
 const AppDispatcher = require('../dispatcher/appDispatcher');
-export const WorkStore = new Store(AppDispatcher);
+export const EducationStore = new Store(AppDispatcher);
 
-import WorkConstants from '../constants/work';
+const EducationConstants = require('../constants/work');
 
 var _workExperiences = [];
 
-WorkStore.all = function() {
+EducationStore.all = function() {
   return _workExperiences;
 };
 
-WorkStore.__onDispatch = function (payload) {
+EducationStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
-    case WorkConstants.WORK_EXPERIENCES:
+    case EducationConstants.EMAIL_UNIQUE:
       receiveExperiences(payload.experiences);
-      WorkStore.__emitChange();
+      EducationStore.__emitChange();
       break;
   }
 };

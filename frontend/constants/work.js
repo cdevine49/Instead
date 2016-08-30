@@ -1,3 +1,3 @@
-export const WorkConstants = {
+export default {
   WORK_EXPERIENCES: 'WORK_EXPERIENCES'
 };
