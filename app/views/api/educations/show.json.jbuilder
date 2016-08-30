@@ -1,2 +1,1 @@
-json.extract! @education, :id, :school, :start, :end, :degree, :field,
-                          :grade, :extracurriculars, :description
+json.partial! 'api/educations/education', education: @education

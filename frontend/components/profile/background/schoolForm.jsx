@@ -31,6 +31,7 @@ export default class SchoolForm extends React.Component{
   handleSubmit() {
     const data = {
       school: this.state.school,
+      degree: this.state.degree,
       field: this.state.field,
       grade: this.state.grade,
       start: [this.state.start_year, this.state.start_month],

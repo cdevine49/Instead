@@ -4,7 +4,6 @@ class Api::EducationsController < ApplicationController
 
   def create
     @education = current_user.profile.educations.build(education_params)
-    debugger
     if @education.save
       render :show
     else

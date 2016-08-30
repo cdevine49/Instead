@@ -6,9 +6,8 @@ export const createSchool = data => {
       url: "/api/educations/",
       dataType: "json",
       data: data,
-      success: function (experience) {
-        debugger
-        // WorkActions.receiveSchool(experience);
+      success: function (education) {
+        // WorkActions.receiveSchool(education);
         resolve();
       },
       error: function (response) {
@@ -25,8 +24,8 @@ export const editSchool = (id, data) => {
       url: "/api/educations/" + id,
       dataType: "json",
       data: data,
-      success: function (experience) {
-        // WorkActions.receiveSchool(experience);
+      success: function (education) {
+        // WorkActions.receiveSchool(education);
         resolve();
       },
       error: function (response) {
@@ -42,8 +41,8 @@ export const destroySchool = id => {
       type: "DELETE",
       url: "/api/educations/" + id,
       dataType: "json",
-      success: function (experience) {
-        // WorkActions.receiveSchool(experience);
+      success: function (education) {
+        // WorkActions.receiveSchool(education);
         resolve();
       },
       error: function (response) {

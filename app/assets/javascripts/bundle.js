@@ -39073,6 +39073,7 @@
 	    value: function handleSubmit() {
 	      var data = {
 	        school: this.state.school,
+	        degree: this.state.degree,
 	        field: this.state.field,
 	        grade: this.state.grade,
 	        start: [this.state.start_year, this.state.start_month],
@@ -39328,9 +39329,8 @@
 	      url: "/api/educations/",
 	      dataType: "json",
 	      data: data,
-	      success: function success(experience) {
-	        debugger;
-	        // WorkActions.receiveSchool(experience);
+	      success: function success(education) {
+	        // WorkActions.receiveSchool(education);
 	        resolve();
 	      },
 	      error: function error(response) {
@@ -39347,8 +39347,8 @@
 	      url: "/api/educations/" + id,
 	      dataType: "json",
 	      data: data,
-	      success: function success(experience) {
-	        // WorkActions.receiveSchool(experience);
+	      success: function success(education) {
+	        // WorkActions.receiveSchool(education);
 	        resolve();
 	      },
 	      error: function error(response) {
@@ -39364,8 +39364,8 @@
 	      type: "DELETE",
 	      url: "/api/educations/" + id,
 	      dataType: "json",
-	      success: function success(experience) {
-	        // WorkActions.receiveSchool(experience);
+	      success: function success(education) {
+	        // WorkActions.receiveSchool(education);
 	        resolve();
 	      },
 	      error: function error(response) {
